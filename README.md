@@ -9,7 +9,7 @@ A browser extension for X/Twitter that helps you focus on what matters.
 - **Hide vanity metrics** - No more like counts, retweet counts, or follower numbers
 - **Show mutual follows** - Green highlight on people who follow you back
 - **Personal notes system** - Add private notes to any account
-- **Account labels** - Tag accounts as POND, BOT, or BILLBOARD
+- **Account labels** - Tag accounts as POND, BOT, BILLBOARD, or GRIFTER
 - **Screenshot receipts** - Save screenshots with automatic RECEIPTS label
 - **Notes dashboard** - View and manage all your notes in one place
 
@@ -49,8 +49,9 @@ On Mac, use `Cmd` instead of `Ctrl`.
 Your notes are stored locally in your browser. To keep them safe:
 
 **Automatic backup (enabled by default):**
-- Saves a backup file daily to your Downloads folder
+- Saves a backup file daily to your **Downloads** folder
 - Filename: `emilios-backup-YYYY-MM-DD.json`
+- Location: Your default browser downloads folder (e.g., `C:\Users\YourName\Downloads` on Windows, `~/Downloads` on Mac)
 - Toggle on/off in the extension popup
 
 **Manual backup:**
