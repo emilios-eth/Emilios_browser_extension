@@ -1,0 +1,567 @@
+/* Hide all metric numbers when extension is enabled */
+body.hide-vanity-metrics [data-testid="app-text-transition-container"],
+body.hide-vanity-metrics [data-testid="app-text-transition-container"] * {
+  color: transparent !important;
+}
+
+/* Hide views/analytics link text */
+body.hide-vanity-metrics a[href*="/analytics"],
+body.hide-vanity-metrics a[href*="/analytics"] * {
+  color: transparent !important;
+}
+
+/* Hide follower/following counts on profiles */
+body.hide-vanity-metrics a[href$="/verified_followers"] span span,
+body.hide-vanity-metrics a[href$="/followers"] span span,
+body.hide-vanity-metrics a[href$="/following"] span span {
+  color: transparent !important;
+}
+
+/* Hide repost/quote/like counts on detail views */
+body.hide-vanity-metrics a[href$="/retweets"] span,
+body.hide-vanity-metrics a[href$="/retweets/with_comments"] span,
+body.hide-vanity-metrics a[href$="/likes"] span,
+body.hide-vanity-metrics a[href$="/quotes"] span {
+  color: transparent !important;
+}
+
+/* Hide Twitter Blue checkmarks */
+body.hide-vanity-metrics svg[aria-label="Verified account"] {
+  display: none !important;
+}
+
+/* Hide @handles when showing mutuals */
+body.show-mutual-badges [data-testid="User-Name"] a[href^="/"][tabindex="-1"],
+body.show-mutual-badges [data-testid="UserName"] a[href^="/"][tabindex="-1"] {
+  display: none !important;
+}
+
+
+/* Make mutual names green with border on timeline - only the name link, not timestamp */
+body.show-mutual-badges article[data-is-mutual="true"] [data-testid="User-Name"] > div > div > a[role="link"]:first-child {
+  border: 1px solid #00c853 !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+}
+
+body.show-mutual-badges article[data-is-mutual="true"] [data-testid="User-Name"] > div > div > a[role="link"]:first-child span {
+  color: #00c853 !important;
+}
+
+/* Make mutual names green with border on profile */
+body.show-mutual-badges [data-testid="UserName"][data-is-mutual="true"] span span {
+  color: #00c853 !important;
+}
+
+body.show-mutual-badges [data-testid="UserName"][data-is-mutual="true"] > div > div > div:first-child {
+  border: 1px solid #00c853 !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+}
+
+/* Make mutual names green with border in sidebar */
+body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="ltr"] span {
+  color: #00c853 !important;
+}
+
+body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="ltr"] {
+  border: 1px solid #00c853 !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+}
+
+/* ===== NOTES SYSTEM STYLES ===== */
+
+/* Pencil button for notes */
+.x-honest-note-btn {
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 4px;
+  opacity: 0.5;
+  filter: grayscale(100%);
+  transition: opacity 0.2s, filter 0.2s;
+  display: inline;
+  vertical-align: baseline;
+}
+
+.x-honest-note-btn:hover {
+  opacity: 1;
+}
+
+/* Green pencil when note exists */
+.x-honest-note-btn.has-note {
+  filter: hue-rotate(90deg) saturate(2);
+  opacity: 0.9;
+}
+
+.x-honest-note-btn.has-note:hover {
+  opacity: 1;
+}
+
+/* Modal backdrop */
+#x-honest-notes-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+}
+
+#x-honest-notes-modal.visible {
+  display: block;
+}
+
+.x-honest-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Modal content */
+.x-honest-modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #15202b;
+  border-radius: 16px;
+  width: 600px;
+  max-width: 90vw;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid #38444d;
+}
+
+/* Modal header */
+.x-honest-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #38444d;
+}
+
+.x-honest-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e7e9ea;
+}
+
+.x-honest-modal-close {
+  background: none;
+  border: none;
+  color: #e7e9ea;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.x-honest-modal-close:hover {
+  background: rgba(239, 243, 244, 0.1);
+}
+
+/* Notes log display */
+.x-honest-notes-log {
+  padding: 12px 16px;
+  color: #e7e9ea;
+  font-size: 13px;
+  font-family: monospace;
+  max-height: 250px;
+  overflow-y: auto;
+  border-bottom: 1px solid #38444d;
+}
+
+/* Individual note entry */
+.x-honest-note-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 6px 0;
+  border-bottom: 1px solid #2f3336;
+}
+
+.x-honest-note-entry:last-child {
+  border-bottom: none;
+}
+
+.x-honest-note-text {
+  flex: 1;
+  word-break: break-word;
+  padding-right: 8px;
+}
+
+.x-honest-note-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.x-honest-note-edit,
+.x-honest-note-delete-entry {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.x-honest-note-edit:hover,
+.x-honest-note-delete-entry:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.x-honest-has-screenshot {
+  margin-left: 4px;
+  opacity: 0.8;
+}
+
+/* Input row */
+.x-honest-note-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+}
+
+#x-honest-note-input {
+  flex: 1;
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px solid #38444d;
+  border-radius: 8px;
+  color: #e7e9ea;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#x-honest-note-input:focus {
+  outline: none;
+  border-color: #1d9bf0;
+}
+
+#x-honest-note-input::placeholder {
+  color: #71767b;
+}
+
+/* URL checkbox row */
+.x-honest-note-url-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #71767b;
+  border-top: 1px solid #38444d;
+}
+
+.x-honest-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #e7e9ea;
+  flex-shrink: 0;
+}
+
+.x-honest-checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #1d9bf0;
+}
+
+.x-honest-post-url {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  color: #1d9bf0;
+  font-size: 11px;
+}
+
+/* Screenshot/Paste Image button */
+.x-honest-btn-screenshot {
+  background: #10b981 !important;
+  color: #fff !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.x-honest-btn-screenshot:hover {
+  background: #059669 !important;
+}
+
+.x-honest-btn-screenshot:disabled {
+  background: #6b7280 !important;
+  cursor: not-allowed;
+}
+
+
+/* Modal footer */
+.x-honest-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid #38444d;
+}
+
+/* Buttons */
+.x-honest-btn {
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.x-honest-btn-add {
+  background: #1d9bf0;
+  color: #fff;
+}
+
+.x-honest-btn-add:hover {
+  background: #1a8cd8;
+}
+
+.x-honest-btn-delete {
+  background: transparent;
+  color: #f4212e;
+  border: 1px solid #67070f;
+}
+
+.x-honest-btn-delete:hover {
+  background: rgba(244, 33, 46, 0.1);
+}
+
+.x-honest-btn-export {
+  background: transparent;
+  color: #1d9bf0;
+  border: 1px solid #1d9bf0;
+}
+
+.x-honest-btn-export:hover {
+  background: rgba(29, 155, 240, 0.1);
+}
+
+/* ===== QUICK LABELS ===== */
+
+/* Labels row in modal - now at top, account-level */
+.x-honest-labels-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #38444d;
+  background: rgba(29, 155, 240, 0.03);
+}
+
+.x-honest-labels-title {
+  color: #1d9bf0;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.x-honest-labels-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Label button in modal */
+.x-honest-label-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--label-color);
+  color: var(--label-color);
+  transition: background 0.2s, transform 0.1s;
+}
+
+.x-honest-label-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.x-honest-label-btn.active {
+  background: var(--label-color);
+  color: #fff;
+}
+
+.x-honest-label-btn.active:hover {
+  filter: brightness(1.1);
+}
+
+/* Note wrapper for pencil + labels inline */
+.x-honest-note-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  vertical-align: baseline;
+}
+
+/* Label badges next to pencil */
+.x-honest-label-badges {
+  display: inline-flex;
+  gap: 3px;
+  vertical-align: baseline;
+}
+
+.x-honest-label-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: #fff;
+  line-height: 1.2;
+  gap: 3px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* ===== SCREENSHOTS ===== */
+
+.x-honest-screenshots {
+  padding: 12px 16px;
+  border-bottom: 1px solid #38444d;
+}
+
+.x-honest-screenshots-title {
+  color: #71767b;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.x-honest-screenshots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.x-honest-screenshot-item {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.x-honest-screenshot-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid #38444d;
+  transition: border-color 0.2s;
+}
+
+.x-honest-screenshot-thumb:hover {
+  border-color: #1d9bf0;
+}
+
+.x-honest-screenshot-delete {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.x-honest-screenshot-item:hover .x-honest-screenshot-delete {
+  opacity: 1;
+}
+
+/* Screenshot preview overlay */
+#x-honest-screenshot-preview {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10001;
+}
+
+#x-honest-screenshot-preview.visible {
+  display: block;
+}
+
+.x-honest-preview-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.x-honest-preview-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.x-honest-preview-content img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.x-honest-preview-close {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

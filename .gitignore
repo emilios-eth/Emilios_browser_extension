@@ -1,0 +1,12 @@
+# Claude settings
+.claude/
+
+# Test files
+test_*.js
+test_*.html
+debug_*.html
+generate-icons.html
+
+# Windows artifacts
+nul
+Thumbs.db

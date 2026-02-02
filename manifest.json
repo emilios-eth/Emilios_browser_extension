@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Emilios",
+  "version": "1.5",
+  "description": "Less dopamine. More thinking.",
+  "permissions": ["storage", "activeTab", "tabs"],
+  "web_accessible_resources": [
+    {
+      "resources": ["dashboard.html", "dashboard.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "commands": {
+    "toggle-extension": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+X"
+      },
+      "description": "Toggle extension on/off"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["https://x.com/*", "https://twitter.com/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*", "https://twitter.com/*"],
+      "js": ["api.js", "content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

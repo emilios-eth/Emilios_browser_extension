@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Emilios - My Notes</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #15202b; color: #e7e9ea; padding: 20px; margin: 0; }
+h1 { color: #1d9bf0; margin-bottom: 5px; }
+.subtitle { color: #71767b; font-size: 12px; margin-bottom: 15px; }
+
+/* Stats dashboard */
+.stats-row { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+.stat-box { background: #192734; border-radius: 10px; padding: 14px 18px; min-width: 120px; }
+.stat-box h3 { color: #1d9bf0; margin: 0 0 6px 0; font-size: 12px; text-transform: uppercase; }
+.stat-box .value { color: #e7e9ea; font-size: 24px; font-weight: 700; }
+.legend-box { background: #192734; border-radius: 10px; padding: 14px 18px; }
+.legend-box h3 { color: #1d9bf0; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; }
+.legend-items { display: flex; gap: 12px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-badge { padding: 3px 8px; border-radius: 4px; color: #fff; font-size: 10px; font-weight: 700; }
+.legend-desc { color: #71767b; font-size: 10px; }
+
+/* Controls row */
+.controls-row { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; }
+.btn { background: #1d9bf0; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+.btn:hover { background: #1a8cd8; }
+.btn-secondary { background: #38444d; }
+.btn-secondary:hover { background: #4a5568; }
+.search-box { flex: 1; max-width: 300px; padding: 8px 12px; background: #192734; border: 1px solid #38444d; border-radius: 6px; color: #e7e9ea; font-size: 13px; }
+.search-box:focus { outline: none; border-color: #1d9bf0; }
+.search-box::placeholder { color: #71767b; }
+.status { font-size: 11px; color: #10b981; }
+
+/* Table - auto layout for responsive sizing */
+table { border-collapse: collapse; background: #192734; border-radius: 12px; overflow: hidden; width: 100%; table-layout: auto; }
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #38444d; vertical-align: top; }
+th { background: #22303c; color: #1d9bf0; font-weight: 600; font-size: 13px; white-space: nowrap; vertical-align: middle; }
+tr:hover { background: #1c2938; }
+tr.user-first { border-top: 2px solid #38444d; }
+
+/* Column constraints - let browser auto-size with hints */
+.col-count { white-space: nowrap; text-align: center; }
+.col-handle { white-space: nowrap; }
+.col-labels { white-space: nowrap; }
+.col-notes { min-width: 180px; max-width: 400px; }
+.col-ref { white-space: nowrap; text-align: center; }
+.col-receipts { white-space: nowrap; text-align: center; }
+.col-date { white-space: nowrap; text-align: center; }
+.col-delete { white-space: nowrap; text-align: center; }
+
+/* Labels cell - horizontal flow with wrap */
+td.col-labels { vertical-align: top; padding-top: 10px; }
+.labels-wrap { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+/* Header with filter icon */
+.th-content { display: flex; align-items: center; gap: 6px; }
+.th-title { font-weight: 600; }
+.filter-icon { cursor: pointer; opacity: 0.5; font-size: 12px; }
+.filter-icon:hover { opacity: 1; }
+.filter-icon.active { opacity: 1; color: #10b981; }
+.sort-icon { cursor: pointer; opacity: 0.7; font-size: 10px; margin-left: 4px; }
+.sort-icon:hover { opacity: 1; }
+
+/* Filter popups */
+.filter-popup { display: none; position: absolute; background: #192734; border: 1px solid #38444d; border-radius: 8px; padding: 12px; z-index: 100; min-width: 150px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.filter-popup.show { display: block; }
+.filter-popup h4 { margin: 0 0 10px 0; font-size: 12px; color: #1d9bf0; }
+.filter-popup input[type="number"], .filter-popup input[type="text"] { width: 100%; padding: 6px 8px; background: #15202b; border: 1px solid #38444d; border-radius: 4px; color: #e7e9ea; font-size: 12px; margin-bottom: 8px; }
+.filter-popup input:focus { outline: none; border-color: #1d9bf0; }
+.filter-popup label { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-bottom: 6px; cursor: pointer; }
+.filter-popup .btn-row { display: flex; gap: 6px; margin-top: 10px; }
+.filter-popup .btn { padding: 5px 10px; font-size: 11px; }
+
+/* Labels */
+.label { display: inline-block; padding: 2px 6px; border-radius: 4px; color: #fff; font-size: 10px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
+.label:hover { opacity: 0.8; }
+.label-add { background: transparent; border: none; color: #fff; padding: 0; font-size: 18px; font-weight: 300; line-height: 1; opacity: 0.6; }
+.label-add:hover { opacity: 1; color: #1d9bf0; }
+
+/* Links */
+.handle-link { color: #1d9bf0; text-decoration: none; font-weight: 600; font-size: 13px; }
+.handle-link:hover { text-decoration: underline; }
+.ref-link { color: #1d9bf0; font-size: 12px; text-decoration: none; }
+.ref-link:hover { text-decoration: underline; }
+.show-link { color: #10b981; font-size: 12px; text-decoration: none; cursor: pointer; }
+.show-link:hover { text-decoration: underline; }
+
+/* Delete button */
+.delete-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px 8px; opacity: 0.5; transition: opacity 0.2s; }
+.delete-btn:hover { opacity: 1; }
+
+/* Note cell with edit */
+.note-cell { display: flex; align-items: flex-start; gap: 6px; }
+.note-text { font-size: 13px; word-wrap: break-word; overflow-wrap: break-word; flex: 1; line-height: 1.4; }
+.edit-btn { background: none; border: none; cursor: pointer; font-size: 11px; padding: 2px 4px; opacity: 0.4; transition: opacity 0.2s; flex-shrink: 0; }
+.edit-btn:hover { opacity: 1; }
+
+.date-text { font-size: 11px; color: #a0a0a0; white-space: nowrap; }
+.count-text { font-weight: 600; color: #1d9bf0; font-size: 13px; }
+
+/* Modal */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+.modal.show { display: flex; }
+.modal img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+.modal-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; cursor: pointer; }
+
+/* Label picker popup */
+.label-picker { display: none; position: absolute; background: #192734; border: 1px solid #38444d; border-radius: 8px; padding: 10px; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.label-picker.show { display: block; }
+.label-picker-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; cursor: pointer; border-radius: 4px; margin-bottom: 4px; }
+.label-picker-item:hover { background: #22303c; }
+.label-picker-item.active { background: #22303c; }
+.label-picker-item .check { width: 16px; color: #10b981; }
+
+.no-data { text-align: center; padding: 40px; color: #71767b; }
+</style>
+</head>
+<body>
+<h1>My Notes</h1>
+<div class="subtitle">Live Dashboard - Auto-updates when you make changes</div>
+
+<div class="stats-row">
+  <div class="stat-box">
+    <h3>Users Monitored</h3>
+    <div class="value" id="userCount">0</div>
+  </div>
+  <div class="stat-box">
+    <h3>Total Notes</h3>
+    <div class="value" id="noteCount">0</div>
+  </div>
+  <div class="legend-box">
+    <h3>Label Legend</h3>
+    <div class="legend-items" id="legendItems"></div>
+  </div>
+</div>
+
+<div class="controls-row">
+  <button class="btn" id="refreshBtn">↻ Refresh</button>
+  <button class="btn btn-secondary" id="undoBtn" disabled>↩ Undo</button>
+  <button class="btn btn-secondary" id="resetFiltersBtn">Reset Filters</button>
+  <input type="text" class="search-box" id="handleSearch" placeholder="Search by @user...">
+  <span class="status" id="status"></span>
+</div>
+
+<table>
+<thead>
+<tr>
+  <th class="col-count">
+    <div class="th-content">
+      <span class="th-title">#</span>
+      <span class="filter-icon" id="filterCount" title="Filter by count">⚙</span>
+    </div>
+    <div class="filter-popup" id="filterCountPopup">
+      <h4>Filter by Note Count</h4>
+      <input type="number" id="countMin" placeholder="Min" min="0">
+      <input type="number" id="countMax" placeholder="Max" min="0">
+      <div class="btn-row">
+        <button class="btn" id="applyCountBtn">Apply</button>
+        <button class="btn btn-secondary" id="resetCountBtn">Reset</button>
+      </div>
+    </div>
+  </th>
+  <th class="col-handle"><span class="th-title">User</span></th>
+  <th class="col-labels">
+    <div class="th-content">
+      <span class="th-title">Labels</span>
+      <span class="filter-icon" id="filterLabels" title="Filter by labels">⚙</span>
+    </div>
+    <div class="filter-popup" id="filterLabelsPopup">
+      <h4>Filter by Labels</h4>
+      <div id="labelFilterOptions"></div>
+      <div class="btn-row">
+        <button class="btn" id="applyLabelsBtn">Apply</button>
+        <button class="btn btn-secondary" id="resetLabelsBtn">Reset</button>
+      </div>
+    </div>
+  </th>
+  <th class="col-notes">
+    <div class="th-content">
+      <span class="th-title">Notes</span>
+      <span class="filter-icon" id="filterNotes" title="Filter by text">⚙</span>
+    </div>
+    <div class="filter-popup" id="filterNotesPopup">
+      <h4>Filter by Text</h4>
+      <input type="text" id="notesFilter" placeholder="Search in notes...">
+      <div class="btn-row">
+        <button class="btn" id="applyNotesBtn">Apply</button>
+        <button class="btn btn-secondary" id="resetNotesBtn">Reset</button>
+      </div>
+    </div>
+  </th>
+  <th class="col-ref"><span class="th-title">Ref</span></th>
+  <th class="col-receipts"><span class="th-title">Receipt</span></th>
+  <th class="col-date">
+    <div class="th-content">
+      <span class="th-title">Date</span>
+      <span class="sort-icon" id="sortDate" title="Sort by date">▼</span>
+    </div>
+  </th>
+  <th class="col-delete"></th>
+</tr>
+</thead>
+<tbody id="tb"></tbody>
+</table>
+
+<div class="modal" id="imageModal">
+  <span class="modal-close" id="modalClose">&times;</span>
+  <img id="modalImage" src="" alt="Screenshot">
+</div>
+
+<div class="label-picker" id="labelPicker"></div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
