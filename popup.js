@@ -1,13 +1,15 @@
 const toggleMetrics = document.getElementById('toggleMetrics');
 const toggleMutuals = document.getElementById('toggleMutuals');
 const toggleNotes = document.getElementById('toggleNotes');
+const toggleAutoBackup = document.getElementById('toggleAutoBackup');
 const exportBtn = document.getElementById('exportBtn');
 
 // Load current state
-chrome.storage.sync.get(['hideMetrics', 'showMutuals', 'showNotes'], function(result) {
+chrome.storage.sync.get(['hideMetrics', 'showMutuals', 'showNotes', 'autoBackup'], function(result) {
   toggleMetrics.checked = result.hideMetrics !== false;
   toggleMutuals.checked = result.showMutuals !== false;
   toggleNotes.checked = result.showNotes !== false;
+  toggleAutoBackup.checked = result.autoBackup !== false; // Default ON
 });
 
 // Handle metrics toggle
@@ -23,6 +25,11 @@ toggleMutuals.addEventListener('change', function() {
 // Handle notes toggle
 toggleNotes.addEventListener('change', function() {
   chrome.storage.sync.set({ showNotes: toggleNotes.checked });
+});
+
+// Handle auto backup toggle
+toggleAutoBackup.addEventListener('change', function() {
+  chrome.storage.sync.set({ autoBackup: toggleAutoBackup.checked });
 });
 
 // Handle My Notes button - open dashboard directly

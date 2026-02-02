@@ -100,6 +100,114 @@ function setupEventListeners() {
       closeLabelPicker();
     }
   });
+
+  // Export/Import buttons
+  document.getElementById('exportBtn').onclick = exportBackup;
+  document.getElementById('importBtn').onclick = function() {
+    document.getElementById('importFile').click();
+  };
+  document.getElementById('importFile').onchange = importBackup;
+}
+
+// Export all notes to JSON file
+function exportBackup() {
+  chrome.storage.local.get(['userNotes'], function(result) {
+    var notes = result.userNotes || {};
+    var dataStr = JSON.stringify(notes, null, 2);
+    var blob = new Blob([dataStr], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var date = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = 'emilios-backup-' + date + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showStatus('Backup exported!');
+  });
+}
+
+// Import notes from JSON file
+function importBackup(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+
+  var reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      var importedNotes = JSON.parse(event.target.result);
+
+      // Validate structure
+      if (typeof importedNotes !== 'object') {
+        showStatus('Invalid backup file');
+        return;
+      }
+
+      // Ask user how to handle import
+      var choice = confirm('How do you want to import?\n\nOK = Merge with existing notes\nCancel = Replace all notes (WARNING: deletes current notes)');
+
+      if (choice) {
+        // Merge: combine imported with existing
+        chrome.storage.local.get(['userNotes'], function(result) {
+          var existing = result.userNotes || {};
+
+          // Merge each user
+          for (var handle in importedNotes) {
+            if (existing[handle]) {
+              // Merge entries
+              var existingEntries = existing[handle].entries || [];
+              var importedEntries = importedNotes[handle].entries || [];
+
+              // Add imported entries that don't exist
+              importedEntries.forEach(function(entry) {
+                var exists = existingEntries.some(function(e) {
+                  return e.text === entry.text && e.timestamp === entry.timestamp;
+                });
+                if (!exists) {
+                  existingEntries.push(entry);
+                }
+              });
+
+              existing[handle].entries = existingEntries;
+
+              // Merge labels
+              var existingLabels = existing[handle].labels || [];
+              var importedLabels = importedNotes[handle].labels || [];
+              importedLabels.forEach(function(label) {
+                if (existingLabels.indexOf(label) === -1) {
+                  existingLabels.push(label);
+                }
+              });
+              existing[handle].labels = existingLabels;
+            } else {
+              // New user, add entirely
+              existing[handle] = importedNotes[handle];
+            }
+          }
+
+          chrome.storage.local.set({ userNotes: existing }, function() {
+            showStatus('Backup merged!');
+            loadData();
+          });
+        });
+      } else {
+        // Replace: overwrite everything
+        saveStateForUndo(function() {
+          chrome.storage.local.set({ userNotes: importedNotes }, function() {
+            showStatus('Backup restored!');
+            loadData();
+          });
+        });
+      }
+    } catch (err) {
+      showStatus('Error reading file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+
+  // Reset file input so same file can be selected again
+  e.target.value = '';
 }
 
 function togglePopup(id) {

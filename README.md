@@ -44,6 +44,23 @@ Click **My Notes** to open your dashboard and see all saved notes.
 
 On Mac, use `Cmd` instead of `Ctrl`.
 
+## Backup & Restore
+
+Your notes are stored locally in your browser. To keep them safe:
+
+**Automatic backup (enabled by default):**
+- Saves a backup file daily to your Downloads folder
+- Filename: `emilios-backup-YYYY-MM-DD.json`
+- Toggle on/off in the extension popup
+
+**Manual backup:**
+1. Open My Notes dashboard (Ctrl+Shift+E)
+2. Click **Export Backup** to save a JSON file
+
+**To restore from backup:**
+1. Click **Import Backup** and select your JSON file
+2. Choose to **Merge** (add to existing) or **Replace** (overwrite all)
+
 ## Privacy
 
 All your data stays in your browser. Nothing is sent to any server. Your notes are completely private.

@@ -114,6 +114,7 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
 .label-picker-item .check { width: 16px; color: #10b981; }
 
 .no-data { text-align: center; padding: 40px; color: #71767b; }
+.backup-hint { font-size: 11px; color: #71767b; margin-left: 8px; }
 </style>
 </head>
 <body>
@@ -141,6 +142,12 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
   <button class="btn btn-secondary" id="resetFiltersBtn">Reset Filters</button>
   <input type="text" class="search-box" id="handleSearch" placeholder="Search by @user...">
   <span class="status" id="status"></span>
+</div>
+<div class="controls-row">
+  <button class="btn btn-secondary" id="exportBtn">📥 Export Backup</button>
+  <button class="btn btn-secondary" id="importBtn">📤 Import Backup</button>
+  <input type="file" id="importFile" accept=".json" style="display: none;">
+  <span class="backup-hint">Backup your notes to a JSON file</span>
 </div>
 
 <table>
