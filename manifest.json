@@ -15,7 +15,13 @@
       "suggested_key": {
         "default": "Ctrl+Shift+X"
       },
-      "description": "Toggle extension on/off"
+      "description": "Toggle hide metrics on/off"
+    },
+    "open-dashboard": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E"
+      },
+      "description": "Open My Notes dashboard"
     }
   },
   "background": {

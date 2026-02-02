@@ -35,6 +35,15 @@ On any X profile or timeline, click the pencil icon to add notes about an accoun
 
 Click **My Notes** to open your dashboard and see all saved notes.
 
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+Shift+X` | Toggle hide metrics on/off |
+| `Ctrl+Shift+E` | Open My Notes dashboard |
+
+On Mac, use `Cmd` instead of `Ctrl`.
+
 ## Privacy
 
 All your data stays in your browser. Nothing is sent to any server. Your notes are completely private.

@@ -2,19 +2,16 @@
 
 chrome.commands.onCommand.addListener((command) => {
   if (command === 'toggle-extension') {
-    // Toggle both settings
-    chrome.storage.sync.get(['hideMetrics', 'showMutuals'], (result) => {
-      const currentMetrics = result.hideMetrics !== false;
-      const currentMutuals = result.showMutuals !== false;
-
-      // If either is on, turn both off. If both are off, turn both on.
-      const newState = !(currentMetrics || currentMutuals);
-
-      chrome.storage.sync.set({
-        hideMetrics: newState,
-        showMutuals: newState
-      });
+    // Toggle hide metrics
+    chrome.storage.sync.get(['hideMetrics'], (result) => {
+      const current = result.hideMetrics !== false;
+      chrome.storage.sync.set({ hideMetrics: !current });
     });
+  }
+
+  if (command === 'open-dashboard') {
+    // Open the My Notes dashboard
+    chrome.tabs.create({ url: chrome.runtime.getURL('dashboard.html') });
   }
 });
 
