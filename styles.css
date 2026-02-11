@@ -30,44 +30,47 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
   display: none !important;
 }
 
-/* Hide @handles when showing mutuals */
-body.show-mutual-badges [data-testid="User-Name"] a[href^="/"][tabindex="-1"],
-body.show-mutual-badges [data-testid="UserName"] a[href^="/"][tabindex="-1"] {
-  display: none !important;
+/* ===== INLINE SVG ICON STYLES ===== */
+
+/* SVG icons inherit color via currentColor on stroke */
+.x-honest-note-wrapper svg,
+.x-honest-modal-title svg {
+  display: inline-block;
+  vertical-align: -0.15em;
+  width: 1em;
+  height: 1em;
 }
 
-
-/* Make mutual names green with border on timeline - only the name link, not timestamp */
-body.show-mutual-badges article[data-is-mutual="true"] [data-testid="User-Name"] > div > div > a[role="link"]:first-child {
-  border: 1px solid #00c853 !important;
-  border-radius: 4px !important;
-  padding: 2px 6px !important;
+/* Larger icons inside label badges (inline next to usernames) */
+.x-honest-label-badge svg {
+  display: inline-block;
+  vertical-align: -0.15em;
+  width: 1.3em;
+  height: 1.3em;
 }
 
-body.show-mutual-badges article[data-is-mutual="true"] [data-testid="User-Name"] > div > div > a[role="link"]:first-child span {
-  color: #00c853 !important;
+/* Larger icons inside label buttons (modal selector) */
+.x-honest-label-btn svg {
+  display: inline-block;
+  vertical-align: -0.2em;
+  width: 1.4em;
+  height: 1.4em;
 }
 
-/* Make mutual names green with border on profile */
-body.show-mutual-badges [data-testid="UserName"][data-is-mutual="true"] span span {
-  color: #00c853 !important;
+/* Camera/screenshot button icon */
+.x-honest-btn-screenshot svg {
+  display: inline-block;
+  vertical-align: -0.15em;
+  width: 1.1em;
+  height: 1.1em;
 }
 
-body.show-mutual-badges [data-testid="UserName"][data-is-mutual="true"] > div > div > div:first-child {
-  border: 1px solid #00c853 !important;
-  border-radius: 4px !important;
-  padding: 2px 6px !important;
-}
-
-/* Make mutual names green with border in sidebar */
-body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="ltr"] span {
-  color: #00c853 !important;
-}
-
-body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="ltr"] {
-  border: 1px solid #00c853 !important;
-  border-radius: 4px !important;
-  padding: 2px 6px !important;
+/* Screenshot indicator icon */
+.x-honest-has-screenshot svg {
+  display: inline-block;
+  vertical-align: -0.15em;
+  width: 1em;
+  height: 1em;
 }
 
 /* ===== NOTES SYSTEM STYLES ===== */
@@ -75,13 +78,18 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
 /* Pencil button for notes */
 .x-honest-note-btn {
   cursor: pointer;
-  font-size: 18px;
+  font-size: 19px;
   margin-left: 4px;
-  opacity: 0.5;
-  filter: grayscale(100%);
-  transition: opacity 0.2s, filter 0.2s;
-  display: inline;
-  vertical-align: baseline;
+  opacity: 0.6;
+  transition: opacity 0.2s, color 0.2s;
+  display: none; /* Hidden by default, shown via body class */
+  align-items: center;
+  vertical-align: middle;
+  color: #1d9bf0;
+}
+
+body.show-personal-notes .x-honest-note-btn {
+  display: inline-flex;
 }
 
 .x-honest-note-btn:hover {
@@ -90,12 +98,178 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
 
 /* Green pencil when note exists */
 .x-honest-note-btn.has-note {
-  filter: hue-rotate(90deg) saturate(2);
   opacity: 0.9;
+  color: #00c853;
 }
 
 .x-honest-note-btn.has-note:hover {
   opacity: 1;
+}
+
+/* Report Ad button */
+.x-honest-report-btn {
+  cursor: pointer;
+  font-size: 17px;
+  margin-left: 3px;
+  opacity: 0.6;
+  transition: opacity 0.2s, color 0.2s;
+  display: none; /* Hidden by default, shown via body class */
+  align-items: center;
+  vertical-align: middle;
+  color: #1d9bf0;
+}
+
+body.show-report-ad .x-honest-report-btn {
+  display: inline-flex;
+}
+
+.x-honest-report-btn:hover {
+  opacity: 1;
+}
+
+/* Report Modal */
+#x-honest-report-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+}
+
+#x-honest-report-modal.visible {
+  display: block;
+}
+
+.x-honest-report-content {
+  width: 440px;
+}
+
+.x-honest-report-body {
+  padding: 20px 16px;
+  color: #e7e9ea;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.x-honest-report-body p {
+  margin: 0;
+}
+
+/* Report steps (shown after clicking Yes) */
+.x-honest-report-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.x-honest-report-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.x-honest-step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1d9bf0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.x-honest-step-text {
+  flex: 1;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #e7e9ea;
+  min-width: 0;
+}
+
+/* Copy buttons in report steps */
+.x-honest-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-left: 34px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: rgba(29, 155, 240, 0.08);
+  border: 1px solid rgba(29, 155, 240, 0.25);
+  border-radius: 12px;
+  color: #1d9bf0;
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  text-align: left;
+  word-break: break-all;
+}
+
+.x-honest-copy-btn:hover {
+  background: rgba(29, 155, 240, 0.15);
+  border-color: rgba(29, 155, 240, 0.4);
+}
+
+.x-honest-copy-url-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.x-honest-copy-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: #1d9bf0;
+  background: rgba(29, 155, 240, 0.15);
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.x-honest-copy-icon.x-honest-copied {
+  color: #00c853;
+  background: rgba(0, 200, 83, 0.15);
+}
+
+.x-honest-copy-svg {
+  width: 12px;
+  height: 12px;
+}
+
+.x-honest-report-details {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.x-honest-btn-cancel {
+  background: transparent;
+  color: #536471;
+  border: 1px solid #536471;
+}
+
+.x-honest-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 /* Modal backdrop */
@@ -119,7 +293,7 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(91, 112, 131, 0.4);
 }
 
 /* Modal content */
@@ -128,12 +302,13 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #15202b;
-  border-radius: 16px;
+  background: #16181c;
+  border-radius: 20px;
   width: 600px;
   max-width: 90vw;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  border: 1px solid #38444d;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
+  border: 1px solid #2f3336;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* Modal header */
@@ -142,7 +317,8 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  border-bottom: 1px solid #38444d;
+  border-bottom: none;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.03) 0%, transparent 100%);
 }
 
 .x-honest-modal-title {
@@ -171,10 +347,10 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   padding: 12px 16px;
   color: #e7e9ea;
   font-size: 13px;
-  font-family: monospace;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   max-height: 250px;
   overflow-y: auto;
-  border-bottom: 1px solid #38444d;
+  border-bottom: 1px solid #2f3336;
 }
 
 /* Individual note entry */
@@ -190,10 +366,25 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   border-bottom: none;
 }
 
-.x-honest-note-text {
+.x-honest-note-body {
   flex: 1;
-  word-break: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
   padding-right: 8px;
+  min-width: 0;
+}
+
+.x-honest-note-text {
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.x-honest-note-footnote {
+  font-size: 11px;
+  font-style: italic;
+  color: #1d9bf0;
+  text-align: right;
 }
 
 .x-honest-note-actions {
@@ -207,17 +398,31 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  padding: 2px 4px;
+  padding: 4px;
   border-radius: 4px;
-  opacity: 0.6;
-  transition: opacity 0.2s, background 0.2s;
+  opacity: 0.4;
+  transition: opacity 0.2s, color 0.2s, background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  color: #536471;
 }
 
-.x-honest-note-edit:hover,
+.x-honest-note-edit svg,
+.x-honest-note-delete-entry svg {
+  width: 16px;
+  height: 16px;
+}
+
+.x-honest-note-edit:hover {
+  opacity: 1;
+  color: #1d9bf0;
+  background: rgba(29, 155, 240, 0.1);
+}
+
 .x-honest-note-delete-entry:hover {
   opacity: 1;
-  background: rgba(255, 255, 255, 0.1);
+  color: #f4212e;
+  background: rgba(244, 33, 46, 0.1);
 }
 
 .x-honest-has-screenshot {
@@ -236,8 +441,8 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   flex: 1;
   padding: 10px 12px;
   background: transparent;
-  border: 1px solid #38444d;
-  border-radius: 8px;
+  border: 1px solid #2f3336;
+  border-radius: 9999px;
   color: #e7e9ea;
   font-size: 14px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -249,18 +454,19 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
 }
 
 #x-honest-note-input::placeholder {
-  color: #71767b;
+  color: #536471;
 }
 
 /* URL checkbox row */
 .x-honest-note-url-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   padding: 8px 16px;
   font-size: 12px;
-  color: #71767b;
-  border-top: 1px solid #38444d;
+  color: #536471;
+  border-top: 1px solid #2f3336;
 }
 
 .x-honest-checkbox-label {
@@ -279,34 +485,35 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   accent-color: #1d9bf0;
 }
 
-.x-honest-post-url {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-  color: #1d9bf0;
-  font-size: 11px;
-}
-
-/* Screenshot/Paste Image button */
+/* Screenshot/Paste Image button (icon-only) */
 .x-honest-btn-screenshot {
-  background: #10b981 !important;
-  color: #fff !important;
-  padding: 6px 12px !important;
-  font-size: 12px !important;
+  background: transparent !important;
+  color: #536471 !important;
+  padding: 6px !important;
+  font-size: 14px !important;
   border: none;
-  border-radius: 6px;
+  border-radius: 50%;
   cursor: pointer;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
 }
 
 .x-honest-btn-screenshot:hover {
-  background: #059669 !important;
+  background: rgba(29, 155, 240, 0.1) !important;
+  color: #1d9bf0 !important;
 }
 
 .x-honest-btn-screenshot:disabled {
-  background: #6b7280 !important;
+  color: #2f3336 !important;
   cursor: not-allowed;
+}
+
+.x-honest-btn-screenshot svg {
+  width: 18px;
+  height: 18px;
 }
 
 
@@ -317,7 +524,7 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-top: 1px solid #38444d;
+  border-top: 1px solid #2f3336;
 }
 
 /* Buttons */
@@ -342,11 +549,16 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
 
 .x-honest-btn-delete {
   background: transparent;
-  color: #f4212e;
-  border: 1px solid #67070f;
+  color: #536471;
+  border: 1px solid #2f3336;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 16px;
 }
 
 .x-honest-btn-delete:hover {
+  color: #f4212e;
+  border-color: rgba(244, 33, 46, 0.35);
   background: rgba(244, 33, 46, 0.1);
 }
 
@@ -360,25 +572,83 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   background: rgba(29, 155, 240, 0.1);
 }
 
+/* ===== LABEL CONFIRM PROMPT ===== */
+
+#x-honest-label-confirm {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.x-honest-label-confirm-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(91, 112, 131, 0.4);
+}
+
+.x-honest-label-confirm-box {
+  position: relative;
+  background: #15202b;
+  border: 1px solid #2f3336;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.x-honest-label-confirm-text {
+  color: #e7e9ea;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+.x-honest-label-confirm-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #71767b;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.x-honest-label-confirm-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #1d9bf0;
+  cursor: pointer;
+}
+
+.x-honest-label-confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
 /* ===== QUICK LABELS ===== */
 
 /* Labels row in modal - now at top, account-level */
 .x-honest-labels-row {
   display: flex;
   align-items: center;
-  gap: 12px;
   padding: 12px 16px;
-  border-bottom: 1px solid #38444d;
+  border-bottom: 1px solid #2f3336;
   background: rgba(29, 155, 240, 0.03);
 }
 
-.x-honest-labels-title {
-  color: #1d9bf0;
-  font-size: 12px;
-  font-weight: 600;
-  flex-shrink: 0;
-  text-transform: uppercase;
-}
 
 .x-honest-labels-buttons {
   display: flex;
@@ -391,24 +661,35 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 9999px;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
   background: transparent;
   border: 1px solid var(--label-color);
   color: var(--label-color);
   transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0;
 }
 
 .x-honest-label-btn:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 
+.x-honest-label-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
 .x-honest-label-btn.active {
   background: var(--label-color);
   color: #fff;
+}
+
+.x-honest-label-btn.active svg {
+  stroke: #fff;
 }
 
 .x-honest-label-btn.active:hover {
@@ -419,41 +700,187 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
 .x-honest-note-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  vertical-align: baseline;
+  gap: 3px;
+  vertical-align: middle;
+  margin-left: 2px;
 }
 
 /* Label badges next to pencil */
 .x-honest-label-badges {
-  display: inline-flex;
+  display: none; /* Hidden by default, shown via body class */
   gap: 3px;
-  vertical-align: baseline;
+  align-items: center;
+  vertical-align: middle;
+}
+
+body.show-user-labels .x-honest-label-badges {
+  display: inline-flex;
 }
 
 .x-honest-label-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 4px;
-  color: #fff;
-  line-height: 1.2;
-  gap: 3px;
-  white-space: nowrap;
   vertical-align: middle;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  cursor: default;
+}
+
+.x-honest-label-badge:hover {
+  opacity: 1;
+}
+
+.x-honest-label-badge svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+/* ===== COLLAPSIBLE ACCOUNT LABELS ===== */
+
+.x-honest-labels-collapsible {
+  border-bottom: 1px solid #2f3336;
+}
+
+.x-honest-labels-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  color: #71767b;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.x-honest-labels-toggle:hover {
+  color: #e7e9ea;
+}
+
+.x-honest-labels-toggle-text {
+  text-transform: none;
+}
+
+.x-honest-labels-chevron {
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+/* ===== POST-LEVEL LABELS ===== */
+
+/* Post-level tag picker row (for new notes) */
+.x-honest-post-labels-row {
+  padding: 8px 16px;
+}
+
+.x-honest-post-labels-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  overflow-x: auto;
+}
+
+/* Post-level label button in modal picker */
+.x-honest-post-label-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--label-color);
+  color: var(--label-color);
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.x-honest-post-label-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.x-honest-post-label-btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.x-honest-post-label-btn.active {
+  background: var(--label-color);
+  color: #fff;
+}
+
+.x-honest-post-label-btn.active svg {
+  stroke: #fff;
+}
+
+.x-honest-post-label-btn.active:hover {
+  filter: brightness(1.1);
+}
+
+/* Post-level tags displayed on existing note entries */
+.x-honest-post-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.x-honest-post-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--label-color);
+  color: var(--label-color);
+  background: transparent;
+  transition: background 0.2s, opacity 0.2s;
+  white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.x-honest-post-tag.active {
+  background: var(--label-color);
+  color: #fff;
+}
+
+.x-honest-post-tag.active svg {
+  stroke: #fff;
+}
+
+.x-honest-post-tag svg {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+}
+
+.x-honest-post-tag:hover {
+  opacity: 0.8;
 }
 
 /* ===== SCREENSHOTS ===== */
 
 .x-honest-screenshots {
   padding: 12px 16px;
-  border-bottom: 1px solid #38444d;
+  border-bottom: 1px solid #2f3336;
 }
 
 .x-honest-screenshots-title {
-  color: #71767b;
+  color: #536471;
   font-size: 12px;
   margin-bottom: 8px;
 }
@@ -476,7 +903,7 @@ body.show-mutual-badges [data-testid="UserCell"][data-is-mutual="true"] [dir="lt
   object-fit: cover;
   border-radius: 8px;
   cursor: pointer;
-  border: 2px solid #38444d;
+  border: 2px solid #2f3336;
   transition: border-color 0.2s;
 }
 

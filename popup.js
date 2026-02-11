@@ -1,39 +1,38 @@
-const toggleMetrics = document.getElementById('toggleMetrics');
-const toggleMutuals = document.getElementById('toggleMutuals');
 const toggleNotes = document.getElementById('toggleNotes');
-const toggleAutoBackup = document.getElementById('toggleAutoBackup');
+const toggleLabels = document.getElementById('toggleLabels');
+const toggleReportAd = document.getElementById('toggleReportAd');
+const toggleMetrics = document.getElementById('toggleMetrics');
 const exportBtn = document.getElementById('exportBtn');
 
 // Load current state
-chrome.storage.sync.get(['hideMetrics', 'showMutuals', 'showNotes', 'autoBackup'], function(result) {
-  toggleMetrics.checked = result.hideMetrics !== false;
-  toggleMutuals.checked = result.showMutuals !== false;
+chrome.storage.sync.get(['showNotes', 'showLabels', 'showReportAd', 'hideMetrics'], function(result) {
   toggleNotes.checked = result.showNotes !== false;
-  toggleAutoBackup.checked = result.autoBackup !== false; // Default ON
+  toggleLabels.checked = result.showLabels !== false;
+  toggleReportAd.checked = result.showReportAd !== false;
+  toggleMetrics.checked = result.hideMetrics !== false;
 });
 
-// Handle metrics toggle
-toggleMetrics.addEventListener('change', function() {
-  chrome.storage.sync.set({ hideMetrics: toggleMetrics.checked });
-});
-
-// Handle mutuals toggle
-toggleMutuals.addEventListener('change', function() {
-  chrome.storage.sync.set({ showMutuals: toggleMutuals.checked });
-});
-
-// Handle notes toggle
+// Handle Records toggle
 toggleNotes.addEventListener('change', function() {
   chrome.storage.sync.set({ showNotes: toggleNotes.checked });
 });
 
-// Handle auto backup toggle
-toggleAutoBackup.addEventListener('change', function() {
-  chrome.storage.sync.set({ autoBackup: toggleAutoBackup.checked });
+// Handle User Labels toggle
+toggleLabels.addEventListener('change', function() {
+  chrome.storage.sync.set({ showLabels: toggleLabels.checked });
 });
 
-// Handle My Notes button - open dashboard directly
+// Handle Report Ad toggle
+toggleReportAd.addEventListener('change', function() {
+  chrome.storage.sync.set({ showReportAd: toggleReportAd.checked });
+});
+
+// Handle Zen Mode toggle
+toggleMetrics.addEventListener('change', function() {
+  chrome.storage.sync.set({ hideMetrics: toggleMetrics.checked });
+});
+
+// Handle My Records button - open dashboard directly
 exportBtn.addEventListener('click', function() {
-  // Open dashboard directly from popup - no need for active X tab
   chrome.tabs.create({ url: chrome.runtime.getURL('dashboard.html') });
 });

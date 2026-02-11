@@ -2,47 +2,73 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Emilios - My Notes</title>
+<title>RCRD &middot; My Records</title>
 <style>
 * { box-sizing: border-box; }
+/* Inline SVG icons in dashboard */
+svg { display: inline-block; vertical-align: -0.15em; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #15202b; color: #e7e9ea; padding: 20px; margin: 0; }
-h1 { color: #1d9bf0; margin-bottom: 5px; }
-.subtitle { color: #71767b; font-size: 12px; margin-bottom: 15px; }
+/* Dashboard header bar */
+.dash-header { position: sticky; top: 0; z-index: 50; background: rgba(21,32,43,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid #2f3336; margin: -20px -20px 20px -20px; padding: 12px 20px; }
+.dash-header-top { display: flex; align-items: center; gap: 12px; }
+.dash-header-title { font-size: 20px; font-weight: 700; color: #e7e9ea; margin: 0; }
+.dash-header-subtitle { color: #536471; font-size: 12px; margin-left: auto; }
 
-/* Stats dashboard */
-.stats-row { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-.stat-box { background: #192734; border-radius: 10px; padding: 14px 18px; min-width: 120px; }
-.stat-box h3 { color: #1d9bf0; margin: 0 0 6px 0; font-size: 12px; text-transform: uppercase; }
-.stat-box .value { color: #e7e9ea; font-size: 24px; font-weight: 700; }
-.legend-box { background: #192734; border-radius: 10px; padding: 14px 18px; }
-.legend-box h3 { color: #1d9bf0; margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase; }
-.legend-items { display: flex; gap: 12px; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 6px; }
-.legend-badge { padding: 3px 8px; border-radius: 4px; color: #fff; font-size: 10px; font-weight: 700; }
-.legend-desc { color: #71767b; font-size: 10px; }
+/* Stats dashboard - side by side: stacked stats + chart */
+.stats-row { display: flex; gap: 15px; margin-bottom: 20px; align-items: stretch; }
+.stats-col { display: flex; flex-direction: column; gap: 10px; min-width: 130px; }
+.stat-box { background: #16181c; border-radius: 16px; padding: 14px 18px; border: 1px solid #2f3336; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.stat-box h3 { color: #71767b; margin: 0 0 4px 0; font-size: 11px; font-weight: 600; }
+.stat-box .value { color: #e7e9ea; font-size: 22px; font-weight: 700; }
+/* Notes per day chart */
+.chart-box { background: #16181c; border-radius: 16px; padding: 14px 18px; flex: 1; min-width: 300px; position: relative; border: 1px solid #2f3336; }
+.chart-box h3 { color: #71767b; margin: 0 0 8px 0; font-size: 11px; font-weight: 600; }
+.chart-container { position: relative; width: 100%; height: 140px; }
+.chart-container canvas { width: 100%; height: 100%; }
+.chart-tooltip { display: none; position: absolute; background: #1d1f23; color: #e7e9ea; font-size: 11px; padding: 6px 10px; border-radius: 6px; border: 1px solid #2f3336; pointer-events: none; white-space: nowrap; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transform: translate(-50%, -100%); margin-top: -10px; }
+.chart-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: #2f3336; }
+/* Keep legend-badge for label filter options */
+.legend-badge { padding: 4px 10px; border-radius: 9999px; color: #fff; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+.legend-badge svg { width: 14px; height: 14px; stroke: #fff; flex-shrink: 0; }
 
-/* Controls row */
+/* Controls row — only search + reset */
 .controls-row { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; }
-.btn { background: #1d9bf0; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+.btn { background: #1d9bf0; color: #fff; border: none; padding: 8px 14px; border-radius: 9999px; cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 0; }
 .btn:hover { background: #1a8cd8; }
-.btn-secondary { background: #38444d; }
-.btn-secondary:hover { background: #4a5568; }
-.search-box { flex: 1; max-width: 300px; padding: 8px 12px; background: #192734; border: 1px solid #38444d; border-radius: 6px; color: #e7e9ea; font-size: 13px; }
+.btn-secondary { background: transparent; color: #e7e9ea; border: 1px solid #536471; font-weight: 600; }
+.btn-secondary:hover { background: rgba(231,233,234,0.1); }
+.search-box { flex: 1; max-width: 300px; padding: 8px 16px; background: #16181c; border: 1px solid #2f3336; border-radius: 9999px; color: #e7e9ea; font-size: 13px; }
 .search-box:focus { outline: none; border-color: #1d9bf0; }
-.search-box::placeholder { color: #71767b; }
+.search-box::placeholder { color: #536471; }
 .status { font-size: 11px; color: #10b981; }
 
+/* Floating action buttons (bottom-right) */
+.fab-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+.fab-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #2f3336; background: #16181c; color: #e7e9ea; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s, color 0.2s; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.fab-btn:hover { background: rgba(29,155,240,0.1); border-color: #1d9bf0; color: #1d9bf0; }
+.fab-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.fab-btn:disabled:hover { background: #16181c; border-color: #2f3336; color: #e7e9ea; }
+.fab-btn svg { width: 20px; height: 20px; }
+/* Tooltip on hover (left side) */
+.fab-btn::before { content: attr(data-tooltip); position: absolute; right: calc(100% + 10px); top: 50%; transform: translateY(-50%); background: #1d1f23; color: #e7e9ea; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 6px; border: 1px solid #2f3336; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+.fab-btn:hover::before { opacity: 1; }
+.fab-btn.fab-active { border-color: #1d9bf0; color: #1d9bf0; background: rgba(29,155,240,0.08); }
+.fab-btn.fab-active:hover { background: rgba(29,155,240,0.15); }
+
+/* Hidden file input for import */
+#importFile { display: none; }
+
 /* Table - auto layout for responsive sizing */
-table { border-collapse: collapse; background: #192734; border-radius: 12px; overflow: hidden; width: 100%; table-layout: auto; }
-th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #38444d; vertical-align: top; }
-th { background: #22303c; color: #1d9bf0; font-weight: 600; font-size: 13px; white-space: nowrap; vertical-align: middle; }
-tr:hover { background: #1c2938; }
-tr.user-first { border-top: 2px solid #38444d; }
+table { border-collapse: collapse; background: #16181c; border-radius: 16px; overflow: hidden; width: 100%; table-layout: auto; border: 1px solid #2f3336; }
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #2f3336; vertical-align: top; }
+th { background: #1d1f23; color: #71767b; font-weight: 600; font-size: 13px; white-space: nowrap; vertical-align: middle; position: relative; }
+tr:hover { background: rgba(231,233,234,0.03); }
+tr.user-first { border-top: 2px solid #2f3336; }
 
 /* Column constraints - let browser auto-size with hints */
 .col-count { white-space: nowrap; text-align: center; }
 .col-handle { white-space: nowrap; }
-.col-labels { white-space: nowrap; }
+.col-labels { }
 .col-notes { min-width: 180px; max-width: 400px; }
 .col-ref { white-space: nowrap; text-align: center; }
 .col-receipts { white-space: nowrap; text-align: center; }
@@ -56,98 +82,138 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
 /* Header with filter icon */
 .th-content { display: flex; align-items: center; gap: 6px; }
 .th-title { font-weight: 600; }
-.filter-icon { cursor: pointer; opacity: 0.5; font-size: 12px; }
-.filter-icon:hover { opacity: 1; }
-.filter-icon.active { opacity: 1; color: #10b981; }
+.filter-icon { cursor: pointer; opacity: 0.5; display: inline-flex; align-items: center; color: #71767b; }
+.filter-icon:hover { opacity: 1; color: #e7e9ea; }
+.filter-icon.active { opacity: 1; color: #1d9bf0; }
+.filter-icon svg { width: 14px; height: 14px; }
 .sort-icon { cursor: pointer; opacity: 0.7; font-size: 10px; margin-left: 4px; }
 .sort-icon:hover { opacity: 1; }
 
 /* Filter popups */
-.filter-popup { display: none; position: absolute; background: #192734; border: 1px solid #38444d; border-radius: 8px; padding: 12px; z-index: 100; min-width: 150px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.filter-popup { display: none; position: absolute; top: 100%; left: 0; background: #16181c; border: 1px solid #2f3336; border-radius: 16px; padding: 14px; z-index: 100; min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
 .filter-popup.show { display: block; }
-.filter-popup h4 { margin: 0 0 10px 0; font-size: 12px; color: #1d9bf0; }
-.filter-popup input[type="number"], .filter-popup input[type="text"] { width: 100%; padding: 6px 8px; background: #15202b; border: 1px solid #38444d; border-radius: 4px; color: #e7e9ea; font-size: 12px; margin-bottom: 8px; }
+.filter-popup h4 { margin: 0 0 12px 0; font-size: 13px; color: #71767b; white-space: nowrap; }
+.filter-popup input[type="number"], .filter-popup input[type="text"] { width: 100%; padding: 8px 10px; background: #000; border: 1px solid #2f3336; border-radius: 6px; color: #e7e9ea; font-size: 13px; margin-bottom: 8px; }
 .filter-popup input:focus { outline: none; border-color: #1d9bf0; }
-.filter-popup label { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-bottom: 6px; cursor: pointer; }
-.filter-popup .btn-row { display: flex; gap: 6px; margin-top: 10px; }
-.filter-popup .btn { padding: 5px 10px; font-size: 11px; }
+.filter-popup label { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 8px; cursor: pointer; }
+.filter-popup .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+.filter-popup .btn { padding: 6px 14px; font-size: 12px; }
+/* Count filter — side-by-side Min/Max */
+.count-inputs { display: flex; gap: 8px; }
+.count-inputs input { flex: 1; min-width: 0; }
 
-/* Labels */
-.label { display: inline-block; padding: 2px 6px; border-radius: 4px; color: #fff; font-size: 10px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
+/* Labels — sized to match records column font */
+.label { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 9999px; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
+.label svg { width: 15px; height: 15px; flex-shrink: 0; }
 .label:hover { opacity: 0.8; }
-.label-add { background: transparent; border: none; color: #fff; padding: 0; font-size: 18px; font-weight: 300; line-height: 1; opacity: 0.6; }
+.label-add { background: transparent; border: none; color: #536471; padding: 0; line-height: 1; opacity: 0.6; }
 .label-add:hover { opacity: 1; color: #1d9bf0; }
+.label-add svg { width: 20px; height: 20px; }
+
+/* Receipt icon in table */
+.receipt-icon { color: #1d9bf0; display: inline-flex; align-items: center; cursor: pointer; transition: color 0.2s; }
+.receipt-icon:hover { color: #1a8cd8; }
+.receipt-icon svg { width: 18px; height: 18px; }
 
 /* Links */
-.handle-link { color: #1d9bf0; text-decoration: none; font-weight: 600; font-size: 13px; }
-.handle-link:hover { text-decoration: underline; }
-.ref-link { color: #1d9bf0; font-size: 12px; text-decoration: none; }
-.ref-link:hover { text-decoration: underline; }
+.handle-link { color: #e7e9ea; text-decoration: none; font-size: 13px; display: flex; flex-direction: column; gap: 1px; }
+.handle-link:hover .user-name { color: #1d9bf0; }
+.user-name { font-weight: 700; color: #e7e9ea; }
+.user-handle { font-weight: 400; color: #536471; font-size: 11px; }
+.ref-link { color: #1d9bf0; display: inline-flex; align-items: center; text-decoration: none; }
+.ref-link:hover { color: #1a8cd8; }
+.ref-link svg { width: 16px; height: 16px; }
 .show-link { color: #10b981; font-size: 12px; text-decoration: none; cursor: pointer; }
 .show-link:hover { text-decoration: underline; }
 
 /* Delete button */
-.delete-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px 8px; opacity: 0.5; transition: opacity 0.2s; }
-.delete-btn:hover { opacity: 1; }
+.delete-btn { background: none; border: none; cursor: pointer; padding: 4px 8px; opacity: 0.4; transition: opacity 0.2s, color 0.2s; color: #536471; display: inline-flex; align-items: center; }
+.delete-btn:hover { opacity: 1; color: #f4212e; }
+.delete-btn svg { width: 16px; height: 16px; }
 
 /* Note cell with edit */
 .note-cell { display: flex; align-items: flex-start; gap: 6px; }
-.note-text { font-size: 13px; word-wrap: break-word; overflow-wrap: break-word; flex: 1; line-height: 1.4; }
-.edit-btn { background: none; border: none; cursor: pointer; font-size: 11px; padding: 2px 4px; opacity: 0.4; transition: opacity 0.2s; flex-shrink: 0; }
-.edit-btn:hover { opacity: 1; }
+.note-text { font-size: 14px; word-wrap: break-word; overflow-wrap: break-word; flex: 1; line-height: 1.5; }
+.edit-btn { background: none; border: none; cursor: pointer; padding: 2px 4px; opacity: 0.4; transition: opacity 0.2s, color 0.2s; flex-shrink: 0; color: #536471; display: inline-flex; align-items: center; }
+.edit-btn:hover { opacity: 1; color: #1d9bf0; }
+.edit-btn svg { width: 14px; height: 14px; }
 
-.date-text { font-size: 11px; color: #a0a0a0; white-space: nowrap; }
+.date-text { font-size: 11px; color: #536471; white-space: nowrap; }
 .count-text { font-weight: 600; color: #1d9bf0; font-size: 13px; }
 
 /* Modal */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91,112,131,0.4); z-index: 1000; justify-content: center; align-items: center; }
 .modal.show { display: flex; }
 .modal img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
 .modal-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; cursor: pointer; }
 
 /* Label picker popup */
-.label-picker { display: none; position: absolute; background: #192734; border: 1px solid #38444d; border-radius: 8px; padding: 10px; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.label-picker { display: none; position: absolute; background: #16181c; border: 1px solid #2f3336; border-radius: 16px; padding: 10px; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
 .label-picker.show { display: block; }
 .label-picker-item { display: flex; align-items: center; gap: 8px; padding: 6px 8px; cursor: pointer; border-radius: 4px; margin-bottom: 4px; }
-.label-picker-item:hover { background: #22303c; }
-.label-picker-item.active { background: #22303c; }
+.label-picker-item:hover { background: rgba(231,233,234,0.03); }
+.label-picker-item.active { background: rgba(231,233,234,0.03); }
 .label-picker-item .check { width: 16px; color: #10b981; }
 
-.no-data { text-align: center; padding: 40px; color: #71767b; }
-.backup-hint { font-size: 11px; color: #71767b; margin-left: 8px; }
+/* Post-level tags in table */
+.post-tags-wrap { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; align-items: center; }
+.post-tag { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 9999px; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
+.post-tag svg { width: 12px; height: 12px; flex-shrink: 0; }
+.post-tag:hover { opacity: 0.8; }
+.post-tag-add { background: transparent; border: none; color: #536471; padding: 0; line-height: 1; opacity: 0.5; cursor: pointer; display: inline-flex; align-items: center; }
+.post-tag-add:hover { opacity: 1; color: #1d9bf0; }
+.post-tag-add svg { width: 16px; height: 16px; }
+
+/* Picker title */
+.picker-title { font-size: 11px; color: #71767b; font-weight: 600; margin-bottom: 6px; padding: 2px 8px; }
+
+/* Inline edit */
+.inline-edit-active { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.inline-edit-input { width: 100%; padding: 8px 12px; background: #000; border: 1px solid #1d9bf0; border-radius: 8px; color: #e7e9ea; font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+.inline-edit-input:focus { border-color: #1d9bf0; box-shadow: 0 0 0 3px rgba(29,155,240,0.15); }
+.inline-edit-input::placeholder { color: #536471; }
+.inline-edit-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.inline-edit-save { background: #1d9bf0; color: #fff; border: none; padding: 4px 14px; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+.inline-edit-save:hover { background: #1a8cd8; }
+.inline-edit-cancel { background: transparent; color: #71767b; border: 1px solid #2f3336; padding: 4px 14px; border-radius: 9999px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.inline-edit-cancel:hover { background: rgba(231,233,234,0.1); color: #e7e9ea; }
+
+.no-data { text-align: center; padding: 40px; color: #536471; }
+.backup-hint { font-size: 11px; color: #536471; margin-left: 8px; }
 </style>
 </head>
 <body>
-<h1>My Notes</h1>
-<div class="subtitle">Live Dashboard - Auto-updates when you make changes</div>
+<div class="dash-header">
+  <div class="dash-header-top">
+    <h1 class="dash-header-title">My Records</h1>
+    <span class="dash-header-subtitle">Live dashboard &middot; Auto-updates</span>
+  </div>
+</div>
 
 <div class="stats-row">
-  <div class="stat-box">
-    <h3>Users Monitored</h3>
-    <div class="value" id="userCount">0</div>
+  <div class="stats-col">
+    <div class="stat-box">
+      <h3>Users monitored</h3>
+      <div class="value" id="userCount">0</div>
+    </div>
+    <div class="stat-box">
+      <h3>Total records</h3>
+      <div class="value" id="noteCount">0</div>
+    </div>
   </div>
-  <div class="stat-box">
-    <h3>Total Notes</h3>
-    <div class="value" id="noteCount">0</div>
-  </div>
-  <div class="legend-box">
-    <h3>Label Legend</h3>
-    <div class="legend-items" id="legendItems"></div>
+  <div class="chart-box">
+    <h3>Records per day</h3>
+    <div class="chart-container">
+      <canvas id="notesChart"></canvas>
+      <div class="chart-tooltip" id="chartTooltip"></div>
+    </div>
   </div>
 </div>
 
 <div class="controls-row">
-  <button class="btn" id="refreshBtn">↻ Refresh</button>
-  <button class="btn btn-secondary" id="undoBtn" disabled>↩ Undo</button>
-  <button class="btn btn-secondary" id="resetFiltersBtn">Reset Filters</button>
+  <button class="btn btn-secondary" id="resetFiltersBtn">Reset filters</button>
   <input type="text" class="search-box" id="handleSearch" placeholder="Search by @user...">
   <span class="status" id="status"></span>
-</div>
-<div class="controls-row">
-  <button class="btn btn-secondary" id="exportBtn">📥 Export Backup</button>
-  <button class="btn btn-secondary" id="importBtn">📤 Import Backup</button>
-  <input type="file" id="importFile" accept=".json" style="display: none;">
-  <span class="backup-hint">Backup your notes to a JSON file</span>
 </div>
 
 <table>
@@ -156,12 +222,14 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
   <th class="col-count">
     <div class="th-content">
       <span class="th-title">#</span>
-      <span class="filter-icon" id="filterCount" title="Filter by count">⚙</span>
+      <span class="filter-icon" id="filterCount" title="Filter by count"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M4 5.5C4 4.56 4 4.09 4.201 3.729C4.367 3.431 4.621 3.191 4.93 3.039C5.301 2.856 5.783 2.885 6.75 2.944L17.25 3.556C18.217 3.615 18.699 3.644 19.07 3.827C19.379 3.979 19.633 4.219 19.799 4.517C20 4.878 20 5.348 20 6.288V6.548C20 7.107 20 7.387 19.929 7.648C19.867 7.879 19.766 8.097 19.632 8.293C19.479 8.517 19.264 8.702 18.834 9.074L14.766 12.592C14.336 12.963 14.121 13.149 13.968 13.373C13.834 13.569 13.733 13.787 13.671 14.018C13.6 14.279 13.6 14.559 13.6 15.118V17.4C13.6 17.778 13.6 17.967 13.539 18.139C13.485 18.291 13.398 18.43 13.285 18.546C13.157 18.678 12.983 18.766 12.636 18.941L11.036 19.741C10.268 20.126 9.884 20.318 9.571 20.27C9.296 20.228 9.051 20.08 8.889 19.86C8.7 19.605 8.7 19.175 8.7 18.315V15.118C8.7 14.559 8.7 14.279 8.629 14.018C8.567 13.787 8.466 13.569 8.332 13.373C8.179 13.149 7.964 12.963 7.534 12.592L3.466 9.074C3.036 8.702 2.821 8.517 2.668 8.293C2.534 8.097 2.433 7.879 2.371 7.648C2.3 7.387 2.3 7.107 2.3 6.548V6.288C2.3 5.348 2.3 4.878 2.501 4.517" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></span>
     </div>
     <div class="filter-popup" id="filterCountPopup">
-      <h4>Filter by Note Count</h4>
-      <input type="number" id="countMin" placeholder="Min" min="0">
-      <input type="number" id="countMax" placeholder="Max" min="0">
+      <h4>Filter by record count</h4>
+      <div class="count-inputs">
+        <input type="number" id="countMin" placeholder="Min" min="0">
+        <input type="number" id="countMax" placeholder="Max" min="0">
+      </div>
       <div class="btn-row">
         <button class="btn" id="applyCountBtn">Apply</button>
         <button class="btn btn-secondary" id="resetCountBtn">Reset</button>
@@ -172,10 +240,10 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
   <th class="col-labels">
     <div class="th-content">
       <span class="th-title">Labels</span>
-      <span class="filter-icon" id="filterLabels" title="Filter by labels">⚙</span>
+      <span class="filter-icon" id="filterLabels" title="Filter by labels"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M4 5.5C4 4.56 4 4.09 4.201 3.729C4.367 3.431 4.621 3.191 4.93 3.039C5.301 2.856 5.783 2.885 6.75 2.944L17.25 3.556C18.217 3.615 18.699 3.644 19.07 3.827C19.379 3.979 19.633 4.219 19.799 4.517C20 4.878 20 5.348 20 6.288V6.548C20 7.107 20 7.387 19.929 7.648C19.867 7.879 19.766 8.097 19.632 8.293C19.479 8.517 19.264 8.702 18.834 9.074L14.766 12.592C14.336 12.963 14.121 13.149 13.968 13.373C13.834 13.569 13.733 13.787 13.671 14.018C13.6 14.279 13.6 14.559 13.6 15.118V17.4C13.6 17.778 13.6 17.967 13.539 18.139C13.485 18.291 13.398 18.43 13.285 18.546C13.157 18.678 12.983 18.766 12.636 18.941L11.036 19.741C10.268 20.126 9.884 20.318 9.571 20.27C9.296 20.228 9.051 20.08 8.889 19.86C8.7 19.605 8.7 19.175 8.7 18.315V15.118C8.7 14.559 8.7 14.279 8.629 14.018C8.567 13.787 8.466 13.569 8.332 13.373C8.179 13.149 7.964 12.963 7.534 12.592L3.466 9.074C3.036 8.702 2.821 8.517 2.668 8.293C2.534 8.097 2.433 7.879 2.371 7.648C2.3 7.387 2.3 7.107 2.3 6.548V6.288C2.3 5.348 2.3 4.878 2.501 4.517" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></span>
     </div>
     <div class="filter-popup" id="filterLabelsPopup">
-      <h4>Filter by Labels</h4>
+      <h4>Filter by labels</h4>
       <div id="labelFilterOptions"></div>
       <div class="btn-row">
         <button class="btn" id="applyLabelsBtn">Apply</button>
@@ -185,24 +253,26 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
   </th>
   <th class="col-notes">
     <div class="th-content">
-      <span class="th-title">Notes</span>
-      <span class="filter-icon" id="filterNotes" title="Filter by text">⚙</span>
+      <span class="th-title">Records</span>
+      <span class="filter-icon" id="filterNotes" title="Filter by text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M4 5.5C4 4.56 4 4.09 4.201 3.729C4.367 3.431 4.621 3.191 4.93 3.039C5.301 2.856 5.783 2.885 6.75 2.944L17.25 3.556C18.217 3.615 18.699 3.644 19.07 3.827C19.379 3.979 19.633 4.219 19.799 4.517C20 4.878 20 5.348 20 6.288V6.548C20 7.107 20 7.387 19.929 7.648C19.867 7.879 19.766 8.097 19.632 8.293C19.479 8.517 19.264 8.702 18.834 9.074L14.766 12.592C14.336 12.963 14.121 13.149 13.968 13.373C13.834 13.569 13.733 13.787 13.671 14.018C13.6 14.279 13.6 14.559 13.6 15.118V17.4C13.6 17.778 13.6 17.967 13.539 18.139C13.485 18.291 13.398 18.43 13.285 18.546C13.157 18.678 12.983 18.766 12.636 18.941L11.036 19.741C10.268 20.126 9.884 20.318 9.571 20.27C9.296 20.228 9.051 20.08 8.889 19.86C8.7 19.605 8.7 19.175 8.7 18.315V15.118C8.7 14.559 8.7 14.279 8.629 14.018C8.567 13.787 8.466 13.569 8.332 13.373C8.179 13.149 7.964 12.963 7.534 12.592L3.466 9.074C3.036 8.702 2.821 8.517 2.668 8.293C2.534 8.097 2.433 7.879 2.371 7.648C2.3 7.387 2.3 7.107 2.3 6.548V6.288C2.3 5.348 2.3 4.878 2.501 4.517" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></span>
     </div>
     <div class="filter-popup" id="filterNotesPopup">
-      <h4>Filter by Text</h4>
-      <input type="text" id="notesFilter" placeholder="Search in notes...">
+      <h4>Filter by text</h4>
+      <input type="text" id="notesFilter" placeholder="Search in records...">
+      <h4 style="margin-top:10px;">Filter by post tags</h4>
+      <div id="postLabelFilterOptions"></div>
       <div class="btn-row">
         <button class="btn" id="applyNotesBtn">Apply</button>
         <button class="btn btn-secondary" id="resetNotesBtn">Reset</button>
       </div>
     </div>
   </th>
-  <th class="col-ref"><span class="th-title">Ref</span></th>
+  <th class="col-ref"><span class="th-title">Post</span></th>
   <th class="col-receipts"><span class="th-title">Receipt</span></th>
   <th class="col-date">
     <div class="th-content">
       <span class="th-title">Date</span>
-      <span class="sort-icon" id="sortDate" title="Sort by date">▼</span>
+      <span class="sort-icon" id="sortDate" title="Sort by date">&#9660;</span>
     </div>
   </th>
   <th class="col-delete"></th>
@@ -211,12 +281,33 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
 <tbody id="tb"></tbody>
 </table>
 
+<!-- Floating action buttons -->
+<div class="fab-container">
+  <button class="fab-btn" id="refreshBtn" data-tooltip="Refresh">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M20.5 5.5V10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 18.5V14H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 9.5C5.36 6.59 8.04 4.5 11.22 4.5C14.78 4.5 17.72 7.1 18.3 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.5 14.5C18.64 17.41 15.96 19.5 12.78 19.5C9.22 19.5 6.28 16.9 5.7 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="fab-btn" id="undoBtn" data-tooltip="Undo" disabled>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M4 9H14C17.314 9 20 11.686 20 15C20 18.314 17.314 21 14 21H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 5L4 9L8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="fab-btn" id="importBtn" data-tooltip="Import">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M12 4.5L12 14.5M12 4.5C12.707 4.5 14.032 6.494 14.5 7M12 4.5C11.293 4.5 9.968 6.494 9.5 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+  </button>
+  <button class="fab-btn" id="exportBtn" data-tooltip="Export">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M12 14.5L12 4.5M12 14.5C11.293 14.5 9.968 12.506 9.5 12M12 14.5C12.707 14.5 14.032 12.506 14.5 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+  </button>
+  <button class="fab-btn" id="autoBackupBtn" data-tooltip="Auto backup">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M17.483 18.276C19.546 17.116 21 14.927 21 12.395C21 9.178 18.763 6.49 15.754 5.71C15.095 3.576 13.07 2 10.667 2C7.721 2 5.333 4.388 5.333 7.333L5.333 7.459C3.374 8.192 2 10.078 2 12.271C2 14.728 3.72 16.788 6.05 17.353" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M12 13L12 22M12 13C11.293 13 9.968 14.994 9.5 15.5M12 13C12.707 13 14.032 14.994 14.5 15.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+  </button>
+</div>
+<input type="file" id="importFile" accept=".json">
+
 <div class="modal" id="imageModal">
   <span class="modal-close" id="modalClose">&times;</span>
   <img id="modalImage" src="" alt="Screenshot">
 </div>
 
 <div class="label-picker" id="labelPicker"></div>
+<div class="label-picker" id="postLabelPicker"></div>
 
 <script src="dashboard.js"></script>
 </body>

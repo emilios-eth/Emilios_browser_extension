@@ -1,70 +1,72 @@
-# Emilios
+# RCRD
 
-**Less dopamine. More thinking.**
+**The memory layer for X.**
 
-A browser extension for X/Twitter that helps you focus on what matters.
+A Chrome extension that lets you keep private records on users and posts across X/Twitter.
 
 ## Features
 
-- **Hide vanity metrics** - No more like counts, retweet counts, or follower numbers
-- **Show mutual follows** - Green highlight on people who follow you back
-- **Personal notes system** - Add private notes to any account
-- **Account labels** - Tag accounts as POND, BOT, BILLBOARD, or GRIFTER
-- **Screenshot receipts** - Save screenshots with automatic RECEIPTS label
-- **Notes dashboard** - View and manage all your notes in one place
+- **Records** -- Add private notes to any account or post via the pencil icon on your timeline
+- **User labels** -- Tag accounts as Engagement Farmer, Bot, Walking Billboard, Grifter, Content Thief, Niche Authority, Good Person, Insightful, or Opinion Leader
+- **Post labels** -- Tag individual posts as Shill, Engagement Farming, Misinformation, Stolen Content, Undisclosed Ad, Scam, AI Slop, Alpha, Insightful, or Banger
+- **Auto-derived labels** -- Account labels are automatically derived from post-level patterns (e.g. 5+ Shill posts = Walking Billboard)
+- **Report undisclosed ads** -- One-click button to report undisclosed advertisements to X
+- **Screenshot receipts** -- Paste screenshots from clipboard and attach them to records
+- **Zen Mode** -- Hide vanity metrics (likes, retweets, followers) and focus on content
+- **Dashboard** -- View, filter, search, and manage all your records in one place with an interactive activity chart
 
 ## Installation
 
-1. **Download** - Click the green "Code" button above, then "Download ZIP"
-2. **Unzip** - Extract the downloaded file
+1. **Download** -- Click the green "Code" button above, then "Download ZIP"
+2. **Unzip** -- Extract the downloaded file
 3. **Open browser extensions**
    - Chrome: Go to `chrome://extensions`
    - Brave: Go to `brave://extensions`
    - Edge: Go to `edge://extensions`
-4. **Enable Developer Mode** - Toggle it on (top right corner)
-5. **Load the extension** - Click "Load unpacked" and select the unzipped folder
+4. **Enable Developer Mode** -- Toggle it on (top right corner)
+5. **Load the extension** -- Click "Load unpacked" and select the unzipped folder
 
 ## Usage
 
-Click the extension icon to toggle features on/off:
-- **Hide metrics** - Removes all vanity numbers
-- **Show mutuals** - Highlights mutual follows in green
-- **Personal notes** - Enables the notes system
+Click the extension icon to toggle features:
+- **Records** -- Show/hide the pencil icon for adding records
+- **User Labels** -- Show/hide account labels next to usernames on the timeline
+- **Report Ad** -- Show/hide the undisclosed ad report button
+- **Zen Mode** -- Hide vanity metrics for a distraction-free experience
 
-On any X profile or timeline, click the pencil icon to add notes about an account.
+On any X profile or timeline, click the pencil icon to add records about an account or post.
 
-Click **My Notes** to open your dashboard and see all saved notes.
+Open the **dashboard** (`Ctrl+Shift+E`) to see all saved records, filter by labels, and manage your data.
 
 ## Keyboard Shortcuts
 
 | Shortcut | Action |
 |----------|--------|
-| `Ctrl+Shift+X` | Toggle hide metrics on/off |
-| `Ctrl+Shift+E` | Open My Notes dashboard |
+| `Ctrl+Shift+X` | Toggle Zen Mode on/off |
+| `Ctrl+Shift+E` | Open Records dashboard |
 
 On Mac, use `Cmd` instead of `Ctrl`.
 
 ## Backup & Restore
 
-Your notes are stored locally in your browser. To keep them safe:
+Your records are stored locally in your browser. To keep them safe:
 
-**Automatic backup (enabled by default):**
-- Saves a backup file daily to your **Downloads** folder
-- Filename: `emilios-backup-YYYY-MM-DD.json`
-- Location: Your default browser downloads folder (e.g., `C:\Users\YourName\Downloads` on Windows, `~/Downloads` on Mac)
-- Toggle on/off in the extension popup
+**Automatic backup:**
+- Enable via the cloud icon in the dashboard
+- Saves a backup file daily to your Downloads folder
+- Filename: `rcrd-backup-YYYY-MM-DD.json`
 
 **Manual backup:**
-1. Open My Notes dashboard (Ctrl+Shift+E)
-2. Click **Export Backup** to save a JSON file
+1. Open the dashboard (`Ctrl+Shift+E`)
+2. Click the export button to save a JSON file
 
 **To restore from backup:**
-1. Click **Import Backup** and select your JSON file
+1. Click the import button and select your JSON file
 2. Choose to **Merge** (add to existing) or **Replace** (overwrite all)
 
 ## Privacy
 
-All your data stays in your browser. Nothing is sent to any server. Your notes are completely private.
+All your data stays in your browser. Nothing is sent to any server. Your records are completely private.
 
 ## Updates
 

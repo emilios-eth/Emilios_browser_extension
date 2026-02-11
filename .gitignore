@@ -7,6 +7,9 @@ test_*.html
 debug_*.html
 generate-icons.html
 
+# Unused font files (using inline SVGs instead)
+*.woff2
+
 # Windows artifacts
 nul
 Thumbs.db

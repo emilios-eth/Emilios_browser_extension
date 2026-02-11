@@ -10,7 +10,7 @@ chrome.commands.onCommand.addListener((command) => {
   }
 
   if (command === 'open-dashboard') {
-    // Open the My Notes dashboard
+    // Open the My Records dashboard
     chrome.tabs.create({ url: chrome.runtime.getURL('dashboard.html') });
   }
 });
@@ -67,7 +67,7 @@ function performAutoBackup() {
 
       chrome.downloads.download({
         url: url,
-        filename: `emilios-backup-${today}.json`,
+        filename: `rcrd-backup-${today}.json`,
         saveAs: false // Silent download to default folder
       }, () => {
         // Mark today as backed up
