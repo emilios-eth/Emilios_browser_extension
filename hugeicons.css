@@ -1,0 +1,41 @@
+/* Hugeicons Stroke Rounded - Bundled subset for Emilios extension */
+/* Only includes the icons we actually use */
+
+@font-face {
+  font-family: "hgi-stroke-rounded";
+  src:
+    url("chrome-extension://__MSG_@@extension_id__/hgi-stroke-rounded.woff2") format("woff2"),
+    url("hgi-stroke-rounded.woff2") format("woff2");
+  font-display: swap;
+}
+
+.hgi-stroke {
+  font-family: "hgi-stroke-rounded" !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Pencil Edit */
+.hgi-stroke.hgi-pencil-edit-02:before { content: "\4500"; }
+
+/* Advertisement */
+.hgi-stroke.hgi-advertisiment:before { content: "\3AB7"; }
+
+/* Recycle (Engagement Pond) */
+.hgi-stroke.hgi-recycle-03:before { content: "\45E9"; }
+
+/* Bot */
+.hgi-stroke.hgi-bot:before { content: "\3C8C"; }
+
+/* Dashboard Square (Walking Billboard) */
+.hgi-stroke.hgi-dashboard-square-02:before { content: "\3EE3"; }
+
+/* Evil (Grifter) */
+.hgi-stroke.hgi-evil:before { content: "\3FE0"; }
+
+/* Prisoner (Content Thief) */
+.hgi-stroke.hgi-prisoner:before { content: "\4593"; }
+
+/* Tractor (Attention Farmer) */
+.hgi-stroke.hgi-tractor:before { content: "\494D"; }
