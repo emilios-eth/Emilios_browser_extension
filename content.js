@@ -8,7 +8,8 @@ const QUICK_LABELS = [
   { id: 'pond', text: 'POND', color: '#f59e0b', icon: '⏺️' },
   { id: 'bot', text: 'BOT', color: '#ef4444', icon: '🤖' },
   { id: 'billboard', text: 'BILLBOARD', color: '#8b5cf6', icon: '📱' },
-  { id: 'grifter', text: 'GRIFTER', color: '#64748b', icon: '💀' }
+  { id: 'grifter', text: 'GRIFTER', color: '#64748b', icon: '💀' },
+  { id: 'goon', text: 'GOON', color: '#be185d', icon: '🍆' }
 ];
 
 // Load notes from storage
