@@ -795,11 +795,14 @@ body.show-report-ad .x-honest-report-btn {
   transform: translateY(-2px);
 }
 
-/* Container for action buttons (edit / ad) — no visible pill */
+/* Container for action buttons (edit / ad) */
 .x-honest-actions-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 6px;
+  border-radius: 9999px;
 }
 
 .x-honest-actions-pill svg {
