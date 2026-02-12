@@ -185,6 +185,10 @@ function applyLabelAdd(screenName, labelId) {
   userNotes[key] = userData;
   saveNotes();
   applyNotesIndicators();
+  // Re-render modal if it's open to reflect the new label state
+  if (currentNoteUser) {
+    openNotesModal(currentNoteUser, currentPostUrl);
+  }
 }
 
 // Show custom in-modal confirmation for manual label addition
@@ -1104,10 +1108,13 @@ function openNotesModal(screenName, postUrl = null, displayName = null) {
     btn.addEventListener('click', (e) => {
       const labelId = btn.dataset.labelId;
       const isActive = btn.classList.contains('active');
-      toggleLabel(currentNoteUser, labelId);
-      // Only re-render immediately for removals (adds re-render after async confirm)
       if (isActive) {
+        // Removing — synchronous, re-render immediately
+        toggleLabel(currentNoteUser, labelId);
         openNotesModal(currentNoteUser, currentPostUrl);
+      } else {
+        // Adding — may be async (confirm prompt), toggleLabel handles re-render
+        toggleLabel(currentNoteUser, labelId);
       }
     });
   });
@@ -1456,23 +1463,22 @@ function applyNotesIndicators() {
             openNotesModal(btn.dataset.screenName);
           });
 
-          // Insert next to the display name (first row), after checkmark/badge
-          // X profile UserName structure:
-          //   [data-testid="UserName"]
-          //     └── div (outer flex column)
-          //         ├── div (row1: name link + checkmark + affiliate badge) ← insert HERE
-          //         └── div (row2: @handle)
-          // Strategy: grab the first child div of the first child div of UserName
+          // Insert inline on the profile page name row
+          // X profile UserName structure varies but we want to be on the same line
+          // as the display name, checkmark, and affiliate badge.
+          // Strategy: find the name row's inner link container and append there
           const outerDiv = profileUserName.querySelector(':scope > div');
           const nameRow = outerDiv ? outerDiv.querySelector(':scope > div') : null;
+          let inserted = false;
           if (nameRow) {
-            // Append to the end of the first row (after name, checkmark, affiliate badge)
-            nameRow.style.display = 'flex';
-            nameRow.style.alignItems = 'center';
-            nameRow.style.flexWrap = 'wrap';
+            // Find the innermost flex container in the name row (holds name link + badges)
+            const innerFlex = nameRow.querySelector(':scope > div') || nameRow;
+            wrapper.style.marginLeft = '4px';
             wrapper.style.flexShrink = '0';
-            nameRow.appendChild(wrapper);
-          } else {
+            innerFlex.appendChild(wrapper);
+            inserted = true;
+          }
+          if (!inserted) {
             // Last-resort fallback
             profileUserName.appendChild(wrapper);
           }
