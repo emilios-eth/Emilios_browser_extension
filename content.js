@@ -440,7 +440,7 @@ function editNoteEntry(screenName, index, newText) {
 
   if (newText.trim()) {
     userData.entries[index].text = newText.trim();
-    userData.entries[index].date = new Date().toISOString();
+    userData.entries[index].lastModified = new Date().toISOString();
     userData.entries[index].handle = screenName;
     userNotes[key] = userData;
   } else {
@@ -888,16 +888,75 @@ function openNotesModal(screenName, postUrl = null, displayName = null) {
       btn.addEventListener('click', (e) => {
         const entry = e.target.closest('.x-honest-note-entry');
         if (!entry) return;
+        // Don't start a new edit if one is already active
+        if (entry.querySelector('.x-honest-inline-edit')) return;
         const index = parseInt(entry.dataset.index);
         const currentNotes = getNotes(currentNoteUser);
         if (!currentNotes || !currentNotes[index]) return;
         const currentText = currentNotes[index].text;
 
-        const newText = prompt('Edit record:', currentText);
-        if (newText !== null && newText.trim() !== currentText) {
-          editNoteEntry(currentNoteUser, index, newText);
+        // Hide the note body and actions
+        const noteBody = entry.querySelector('.x-honest-note-body');
+        const noteActions = entry.querySelector('.x-honest-note-actions');
+        noteBody.style.display = 'none';
+        noteActions.style.display = 'none';
+
+        // Create inline edit UI
+        const editWrap = document.createElement('div');
+        editWrap.className = 'x-honest-inline-edit';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'x-honest-inline-edit-input';
+        input.value = currentText;
+        input.placeholder = 'Edit record...';
+
+        const btnRow = document.createElement('div');
+        btnRow.className = 'x-honest-inline-edit-actions';
+
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'x-honest-inline-edit-save';
+        saveBtn.textContent = 'Save';
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'x-honest-inline-edit-cancel';
+        cancelBtn.textContent = 'Cancel';
+
+        btnRow.appendChild(saveBtn);
+        btnRow.appendChild(cancelBtn);
+        editWrap.appendChild(input);
+        editWrap.appendChild(btnRow);
+        entry.appendChild(editWrap);
+
+        input.focus();
+        input.select();
+
+        function cancelEdit() {
+          editWrap.remove();
+          noteBody.style.display = '';
+          noteActions.style.display = '';
+        }
+
+        function saveEdit() {
+          const newText = input.value.trim();
+          if (newText === currentText || (newText === '' && !currentText)) {
+            cancelEdit();
+            return;
+          }
+          if (newText === '') {
+            deleteNoteEntry(currentNoteUser, index);
+          } else {
+            editNoteEntry(currentNoteUser, index, newText);
+          }
           openNotesModal(currentNoteUser, currentPostUrl);
         }
+
+        saveBtn.addEventListener('click', saveEdit);
+        cancelBtn.addEventListener('click', cancelEdit);
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') { ev.preventDefault(); saveEdit(); }
+          else if (ev.key === 'Escape') { ev.preventDefault(); cancelEdit(); }
+        });
       });
     });
 

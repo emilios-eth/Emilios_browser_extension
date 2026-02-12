@@ -393,6 +393,71 @@ body.show-report-ad .x-honest-report-btn {
   flex-shrink: 0;
 }
 
+/* Inline edit inside notes modal */
+.x-honest-inline-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.x-honest-inline-edit-input {
+  width: 100%;
+  background: #16181c;
+  border: 1px solid #1d9bf0;
+  border-radius: 8px;
+  color: #e7e9ea;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.x-honest-inline-edit-input:focus {
+  border-color: #1d9bf0;
+  box-shadow: 0 0 0 1px rgba(29, 155, 240, 0.3);
+}
+
+.x-honest-inline-edit-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.x-honest-inline-edit-save,
+.x-honest-inline-edit-cancel {
+  padding: 4px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.x-honest-inline-edit-save {
+  background: #1d9bf0;
+  color: #fff;
+}
+
+.x-honest-inline-edit-save:hover {
+  background: #1a8cd8;
+}
+
+.x-honest-inline-edit-cancel {
+  background: transparent;
+  color: #71767b;
+  border: 1px solid #536471;
+}
+
+.x-honest-inline-edit-cancel:hover {
+  background: rgba(239, 243, 244, 0.1);
+  color: #e7e9ea;
+}
+
 .x-honest-note-edit,
 .x-honest-note-delete-entry {
   background: none;
