@@ -761,10 +761,13 @@ body.show-report-ad .x-honest-report-btn {
   margin-left: 4px;
   line-height: 1;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  position: relative;
+  top: 2px;
 }
 
 /* Fine-tune profile row alignment with display name/checkmark */
 .x-honest-note-wrapper--profile {
+  top: 0;
   transform: translateY(-2px);
 }
 
