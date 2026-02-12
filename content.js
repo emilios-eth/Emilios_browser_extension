@@ -1478,9 +1478,12 @@ function applyNotesIndicators() {
           // Appending to innerFlex (parent of dir="ltr") places icons right after the name+badge.
           const nameDirDiv = profileUserName.querySelector('div[dir="ltr"]');
           if (nameDirDiv && nameDirDiv.parentElement) {
+            const innerFlex = nameDirDiv.parentElement;
+            innerFlex.style.display = 'flex';
+            innerFlex.style.alignItems = 'center';
             wrapper.style.flexShrink = '0';
             wrapper.style.marginLeft = '4px';
-            nameDirDiv.parentElement.appendChild(wrapper);
+            innerFlex.appendChild(wrapper);
           } else {
             profileUserName.appendChild(wrapper);
           }
