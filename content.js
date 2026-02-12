@@ -1463,32 +1463,18 @@ function applyNotesIndicators() {
             openNotesModal(btn.dataset.screenName);
           });
 
-          // Insert on the same line as "Fogo ✓" (the display name row).
-          // Strategy: find the name <a> link (NOT the @handle link which has tabindex="-1"),
-          // then walk up to the row-level container and append there.
-          let inserted = false;
-          const nameA = profileUserName.querySelector('a[role="link"]:not([tabindex="-1"])');
-          if (nameA) {
-            // Walk up from the <a> until we reach a div whose parent is a direct child of UserName
-            // That div is the "name row" (row 1 in the UserName layout)
-            let el = nameA;
-            while (el.parentElement) {
-              const p = el.parentElement;
-              // Check: is p's parent the [data-testid="UserName"] element?
-              if (p.parentElement === profileUserName) {
-                // el is the name row (direct child of the column which is direct child of UserName)
-                el.style.display = 'flex';
-                el.style.alignItems = 'center';
-                el.style.flexWrap = 'nowrap';
-                wrapper.style.flexShrink = '0';
-                el.appendChild(wrapper);
-                inserted = true;
-                break;
-              }
-              el = p;
-            }
-          }
-          if (!inserted) {
+          // Insert on the name row: "Fogo ✓ [icons here]"
+          // X profile DOM: [data-testid="UserName"] > div(column) > div(nameRow), div(handleRow)
+          // The name row is the FIRST child div of the column div.
+          // There is no <a> link on the profile page name, so we target by structure.
+          const column = profileUserName.querySelector(':scope > div');
+          const nameRow = column ? column.children[0] : null;
+          if (nameRow) {
+            nameRow.style.display = 'flex';
+            nameRow.style.alignItems = 'center';
+            wrapper.style.flexShrink = '0';
+            nameRow.appendChild(wrapper);
+          } else {
             profileUserName.appendChild(wrapper);
           }
         } else {
