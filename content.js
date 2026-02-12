@@ -1463,26 +1463,29 @@ function applyNotesIndicators() {
             openNotesModal(btn.dataset.screenName);
           });
 
-          // Insert on the same line as the display name + checkmark/badge.
-          // Strategy: find the display name <a> link inside UserName, then
-          // insert the wrapper as a sibling right after it in its parent container.
-          // This puts our icons right after the name + verification badge.
-          const nameLink = profileUserName.querySelector('a[role="link"] span');
+          // Insert on the same line as "Fogo ✓" (the display name row).
+          // Strategy: find the name <a> link (NOT the @handle link which has tabindex="-1"),
+          // then walk up to the row-level container and append there.
           let inserted = false;
-          if (nameLink) {
-            // Walk up to the <a> tag, then to its parent (the flex row holding name + badges)
-            const aTag = nameLink.closest('a[role="link"]');
-            if (aTag && aTag.parentElement) {
-              const row = aTag.parentElement;
-              // Ensure the row is a flex container so our wrapper sits inline
-              const cs = window.getComputedStyle(row);
-              if (cs.display !== 'flex' && cs.display !== 'inline-flex') {
-                row.style.display = 'flex';
-                row.style.alignItems = 'center';
+          const nameA = profileUserName.querySelector('a[role="link"]:not([tabindex="-1"])');
+          if (nameA) {
+            // Walk up from the <a> until we reach a div whose parent is a direct child of UserName
+            // That div is the "name row" (row 1 in the UserName layout)
+            let el = nameA;
+            while (el.parentElement) {
+              const p = el.parentElement;
+              // Check: is p's parent the [data-testid="UserName"] element?
+              if (p.parentElement === profileUserName) {
+                // el is the name row (direct child of the column which is direct child of UserName)
+                el.style.display = 'flex';
+                el.style.alignItems = 'center';
+                el.style.flexWrap = 'nowrap';
+                wrapper.style.flexShrink = '0';
+                el.appendChild(wrapper);
+                inserted = true;
+                break;
               }
-              wrapper.style.flexShrink = '0';
-              row.appendChild(wrapper);
-              inserted = true;
+              el = p;
             }
           }
           if (!inserted) {
