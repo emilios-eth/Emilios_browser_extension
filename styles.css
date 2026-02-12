@@ -35,8 +35,6 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
 /* SVG icons inherit color via currentColor on stroke */
 .x-honest-note-wrapper svg {
   display: block;
-  width: 1em;
-  height: 1em;
 }
 
 .x-honest-modal-title svg {
@@ -75,8 +73,7 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
 /* Pencil button for notes */
 .x-honest-note-btn {
   cursor: pointer;
-  font-size: 18px;
-  opacity: 0.6;
+  opacity: 0.7;
   transition: opacity 0.2s, color 0.2s;
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
@@ -105,8 +102,7 @@ body.show-personal-notes .x-honest-note-btn {
 /* Report Ad button */
 .x-honest-report-btn {
   cursor: pointer;
-  font-size: 18px;
-  opacity: 0.6;
+  opacity: 0.7;
   transition: opacity 0.2s, color 0.2s;
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
@@ -761,21 +757,39 @@ body.show-report-ad .x-honest-report-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  vertical-align: bottom;
+  vertical-align: middle;
   margin-left: 4px;
   position: relative;
-  top: -1px;
+}
+
+/* Pill container for action buttons (edit / ad) */
+.x-honest-actions-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  background: rgba(29, 155, 240, 0.10);
+  height: 22px;
+  box-sizing: border-box;
+}
+
+.x-honest-actions-pill svg {
+  display: block;
+  width: 14px;
+  height: 14px;
 }
 
 /* Label badges container — subtle semi-transparent pill */
 .x-honest-label-badges {
   display: none; /* Hidden by default, shown via body class */
-  gap: 4px;
+  gap: 3px;
   align-items: center;
-  margin-left: 2px;
-  padding: 1px 5px;
+  padding: 2px 6px;
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.08);
+  height: 22px;
+  box-sizing: border-box;
 }
 
 body.show-user-labels .x-honest-label-badges {
@@ -802,8 +816,8 @@ body.show-user-labels .x-honest-label-badges {
 }
 
 .x-honest-label-badge svg {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }
 

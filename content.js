@@ -1327,8 +1327,13 @@ function applyNotesIndicators() {
       labelsSpan.className = 'x-honest-label-badges';
       labelsSpan.innerHTML = createLabelBadges(labels);
 
-      wrapper.appendChild(btn);
-      wrapper.appendChild(reportBtn);
+      // Actions pill (edit + ad buttons)
+      const actionsPill = document.createElement('span');
+      actionsPill.className = 'x-honest-actions-pill';
+      actionsPill.appendChild(btn);
+      actionsPill.appendChild(reportBtn);
+
+      wrapper.appendChild(actionsPill);
       wrapper.appendChild(labelsSpan);
 
       // Find where to insert - after the timestamp
@@ -1454,7 +1459,12 @@ function applyNotesIndicators() {
           labelsSpan.className = 'x-honest-label-badges';
           labelsSpan.innerHTML = createLabelBadges(labels);
 
-          wrapper.appendChild(btn);
+          // Actions pill (edit button — no ad on profile)
+          const actionsPill = document.createElement('span');
+          actionsPill.className = 'x-honest-actions-pill';
+          actionsPill.appendChild(btn);
+
+          wrapper.appendChild(actionsPill);
           wrapper.appendChild(labelsSpan);
 
           btn.addEventListener('click', (e) => {
