@@ -78,7 +78,7 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
   line-height: 1;
-  color: #e7e9ea !important;
+  color: #ffffff !important;
 }
 
 body.show-personal-notes .x-honest-note-btn {
@@ -107,7 +107,7 @@ body.show-personal-notes .x-honest-note-btn {
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
   line-height: 1;
-  color: #e7e9ea !important;
+  color: #ffffff !important;
 }
 
 body.show-report-ad .x-honest-report-btn {
@@ -786,7 +786,7 @@ body.show-report-ad .x-honest-report-btn {
   display: none; /* Hidden by default, shown via body class */
   gap: 4px;
   align-items: center;
-  margin-left: 4px;
+  margin-left: 6px;
   padding-left: 6px;
   border-left: 1.5px solid rgba(113, 118, 123, 0.4);
   height: 16px;
