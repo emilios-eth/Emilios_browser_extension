@@ -73,12 +73,12 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
 /* Pencil button for notes */
 .x-honest-note-btn {
   cursor: pointer;
-  opacity: 0.75;
+  opacity: 1;
   transition: opacity 0.2s, color 0.2s;
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
   line-height: 1;
-  color: #ffffff !important;
+  color: #fff !important;
 }
 
 body.show-personal-notes .x-honest-note-btn {
@@ -102,12 +102,12 @@ body.show-personal-notes .x-honest-note-btn {
 /* Report Ad button */
 .x-honest-report-btn {
   cursor: pointer;
-  opacity: 0.75;
+  opacity: 1;
   transition: opacity 0.2s, color 0.2s;
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
   line-height: 1;
-  color: #ffffff !important;
+  color: #fff !important;
 }
 
 body.show-report-ad .x-honest-report-btn {
@@ -756,7 +756,7 @@ body.show-report-ad .x-honest-report-btn {
 .x-honest-note-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 0;
   vertical-align: middle;
   margin-left: 4px;
   line-height: 1;
