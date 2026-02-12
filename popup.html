@@ -228,42 +228,5 @@
   </div>
   <div class="tooltip" id="tooltip"></div>
   <script src="popup.js"></script>
-  <script>
-    (() => {
-      const tip = document.getElementById('tooltip');
-      let hideTimeout;
-
-      document.querySelectorAll('[data-tooltip]').forEach(el => {
-        el.addEventListener('mouseenter', (e) => {
-          clearTimeout(hideTimeout);
-          tip.textContent = el.dataset.tooltip;
-          tip.style.display = 'block';
-
-          const rect = el.getBoundingClientRect();
-          const tipRect = tip.getBoundingClientRect();
-
-          // Position below the element, centered
-          let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
-          let top = rect.bottom + 6;
-
-          // Keep within viewport
-          if (left < 4) left = 4;
-          if (left + tipRect.width > document.documentElement.clientWidth - 4) {
-            left = document.documentElement.clientWidth - tipRect.width - 4;
-          }
-
-          tip.style.left = left + 'px';
-          tip.style.top = top + 'px';
-
-          requestAnimationFrame(() => tip.classList.add('visible'));
-        });
-
-        el.addEventListener('mouseleave', () => {
-          tip.classList.remove('visible');
-          hideTimeout = setTimeout(() => { tip.style.display = 'none'; }, 150);
-        });
-      });
-    })();
-  </script>
 </body>
 </html>

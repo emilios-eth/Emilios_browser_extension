@@ -1226,7 +1226,7 @@ function createLabelBadges(labels) {
     html += labels.map(labelId => {
       const label = QUICK_LABELS.find(l => l.id === labelId);
       if (!label) return '';
-      return `<span class="x-honest-label-badge" style="color: ${label.color}" title="${label.text}">${label.icon}<span class="x-honest-label-name">${label.text}</span></span>`;
+      return `<span class="x-honest-label-badge" style="color: ${label.color}" data-rcrd-tooltip="${label.text}">${label.icon}<span class="x-honest-label-name">${label.text}</span></span>`;
     }).join('');
   }
   return html;
@@ -1308,7 +1308,7 @@ function applyNotesIndicators() {
       const btn = document.createElement('span');
       btn.className = 'x-honest-note-btn';
       btn.innerHTML = SVG_ICONS.pencilEdit;
-      btn.title = latestNote || 'Add note';
+      btn.dataset.rcrdTooltip = latestNote || 'Add a record';
       btn.dataset.screenName = screenName;
 
       if (notes) {
@@ -1319,7 +1319,7 @@ function applyNotesIndicators() {
       const reportBtn = document.createElement('span');
       reportBtn.className = 'x-honest-report-btn';
       reportBtn.innerHTML = SVG_ICONS.advertisiment;
-      reportBtn.title = 'Report Undisclosed Ad';
+      reportBtn.dataset.rcrdTooltip = 'Report Undisclosed Ad';
       reportBtn.dataset.screenName = screenName;
 
       // Create labels container
@@ -1407,7 +1407,7 @@ function applyNotesIndicators() {
       }
     } else {
       // Update existing indicator
-      existingIndicator.title = latestNote || 'Add note';
+      existingIndicator.dataset.rcrdTooltip = latestNote || 'Add a record';
       existingIndicator.dataset.screenName = screenName;
       if (notes) {
         existingIndicator.classList.add('has-note');
@@ -1444,7 +1444,7 @@ function applyNotesIndicators() {
           const btn = document.createElement('span');
           btn.className = 'x-honest-note-btn';
           btn.innerHTML = SVG_ICONS.pencilEdit;
-          btn.title = latestNote || 'Add note';
+          btn.dataset.rcrdTooltip = latestNote || 'Add a record';
           btn.dataset.screenName = screenName;
 
           if (notes) {
@@ -1488,7 +1488,7 @@ function applyNotesIndicators() {
             profileUserName.appendChild(wrapper);
           }
         } else {
-          existingIndicator.title = latestNote || 'Add note';
+          existingIndicator.dataset.rcrdTooltip = latestNote || 'Add a record';
           const existingWrapper = existingIndicator.closest('.x-honest-note-wrapper');
           if (existingWrapper) {
             existingWrapper.classList.add('x-honest-note-wrapper--profile');
@@ -1510,6 +1510,56 @@ function applyNotesIndicators() {
 }
 
 // Context menu removed - using clickable pencil icon instead
+
+// ===== CUSTOM TOOLTIP SYSTEM =====
+(function() {
+  let tipEl = null;
+  let hideTimeout;
+
+  function ensureTip() {
+    if (!tipEl) {
+      tipEl = document.createElement('div');
+      tipEl.className = 'rcrd-tooltip';
+      document.body.appendChild(tipEl);
+    }
+    return tipEl;
+  }
+
+  document.addEventListener('mouseenter', function(e) {
+    const target = e.target.closest('[data-rcrd-tooltip]');
+    if (!target) return;
+    clearTimeout(hideTimeout);
+    const tip = ensureTip();
+    tip.textContent = target.dataset.rcrdTooltip;
+    tip.style.display = 'block';
+
+    const rect = target.getBoundingClientRect();
+    requestAnimationFrame(function() {
+      const tipRect = tip.getBoundingClientRect();
+      let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+      let top = rect.bottom + 6;
+
+      if (left < 4) left = 4;
+      if (left + tipRect.width > window.innerWidth - 4) {
+        left = window.innerWidth - tipRect.width - 4;
+      }
+      if (top + tipRect.height > window.innerHeight - 4) {
+        top = rect.top - tipRect.height - 6;
+      }
+
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+      tip.classList.add('visible');
+    });
+  }, true);
+
+  document.addEventListener('mouseleave', function(e) {
+    const target = e.target.closest('[data-rcrd-tooltip]');
+    if (!target || !tipEl) return;
+    tipEl.classList.remove('visible');
+    hideTimeout = setTimeout(function() { tipEl.style.display = 'none'; }, 150);
+  }, true);
+})();
 
 // ===== END NOTES SYSTEM =====
 

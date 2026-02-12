@@ -30,6 +30,32 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
   display: none !important;
 }
 
+/* ===== Custom tooltip (shadcn-style) ===== */
+.rcrd-tooltip {
+  position: fixed;
+  z-index: 999999;
+  pointer-events: none;
+  max-width: 240px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #e7e9ea;
+  color: #0f1419;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  display: none;
+}
+
+.rcrd-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ===== INLINE SVG ICON STYLES ===== */
 
 /* SVG icons inherit color via currentColor on stroke */

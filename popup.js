@@ -36,3 +36,39 @@ toggleMetrics.addEventListener('change', function() {
 exportBtn.addEventListener('click', function() {
   chrome.tabs.create({ url: chrome.runtime.getURL('dashboard.html') });
 });
+
+// ===== Custom tooltips =====
+(function() {
+  const tip = document.getElementById('tooltip');
+  if (!tip) return;
+  let hideTimeout;
+
+  document.querySelectorAll('[data-tooltip]').forEach(function(el) {
+    el.addEventListener('mouseenter', function() {
+      clearTimeout(hideTimeout);
+      tip.textContent = el.dataset.tooltip;
+      tip.style.display = 'block';
+
+      const rect = el.getBoundingClientRect();
+      const tipRect = tip.getBoundingClientRect();
+
+      let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+      let top = rect.bottom + 6;
+
+      if (left < 4) left = 4;
+      if (left + tipRect.width > document.documentElement.clientWidth - 4) {
+        left = document.documentElement.clientWidth - tipRect.width - 4;
+      }
+
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+
+      requestAnimationFrame(function() { tip.classList.add('visible'); });
+    });
+
+    el.addEventListener('mouseleave', function() {
+      tip.classList.remove('visible');
+      hideTimeout = setTimeout(function() { tip.style.display = 'none'; }, 150);
+    });
+  });
+})();
