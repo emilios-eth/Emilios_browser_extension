@@ -46,7 +46,7 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
   line-height: 1.4;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   opacity: 0;
-  transform: translateY(4px);
+  transform: translateY(-4px);
   transition: opacity 0.15s ease, transform 0.15s ease;
   display: none;
 }

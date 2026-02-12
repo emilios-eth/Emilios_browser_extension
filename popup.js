@@ -53,11 +53,14 @@ exportBtn.addEventListener('click', function() {
       const tipRect = tip.getBoundingClientRect();
 
       let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
-      let top = rect.bottom + 6;
+      let top = rect.top - tipRect.height - 6;
 
       if (left < 4) left = 4;
       if (left + tipRect.width > document.documentElement.clientWidth - 4) {
         left = document.documentElement.clientWidth - tipRect.width - 4;
+      }
+      if (top < 4) {
+        top = rect.bottom + 6;
       }
 
       tip.style.left = left + 'px';

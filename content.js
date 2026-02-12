@@ -1537,14 +1537,15 @@ function applyNotesIndicators() {
     requestAnimationFrame(function() {
       const tipRect = tip.getBoundingClientRect();
       let left = rect.left + (rect.width / 2) - (tipRect.width / 2);
-      let top = rect.bottom + 6;
+      let top = rect.top - tipRect.height - 6;
 
       if (left < 4) left = 4;
       if (left + tipRect.width > window.innerWidth - 4) {
         left = window.innerWidth - tipRect.width - 4;
       }
-      if (top + tipRect.height > window.innerHeight - 4) {
-        top = rect.top - tipRect.height - 6;
+      // Fall below if no room above
+      if (top < 4) {
+        top = rect.bottom + 6;
       }
 
       tip.style.left = left + 'px';
