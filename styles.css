@@ -802,7 +802,7 @@ body.show-user-labels .x-honest-label-badges {
 .x-honest-label-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 3px;
   opacity: 0.9;
   transition: opacity 0.2s;
   cursor: default;
@@ -814,9 +814,16 @@ body.show-user-labels .x-honest-label-badges {
 }
 
 .x-honest-label-badge svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
+}
+
+.x-honest-label-name {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 /* ===== COLLAPSIBLE ACCOUNT LABELS ===== */

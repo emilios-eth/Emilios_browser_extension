@@ -1226,7 +1226,7 @@ function createLabelBadges(labels) {
     html += labels.map(labelId => {
       const label = QUICK_LABELS.find(l => l.id === labelId);
       if (!label) return '';
-      return `<span class="x-honest-label-badge" style="color: ${label.color}" title="${label.text}">${label.icon}</span>`;
+      return `<span class="x-honest-label-badge" style="color: ${label.color}" title="${label.text}">${label.icon}<span class="x-honest-label-name">${label.text}</span></span>`;
     }).join('');
   }
   return html;
@@ -1439,7 +1439,7 @@ function applyNotesIndicators() {
         if (!existingIndicator) {
           // Create wrapper for pencil + labels
           const wrapper = document.createElement('span');
-          wrapper.className = 'x-honest-note-wrapper';
+          wrapper.className = 'x-honest-note-wrapper x-honest-note-wrapper--profile';
 
           const btn = document.createElement('span');
           btn.className = 'x-honest-note-btn';
@@ -1489,6 +1489,10 @@ function applyNotesIndicators() {
           }
         } else {
           existingIndicator.title = latestNote || 'Add note';
+          const existingWrapper = existingIndicator.closest('.x-honest-note-wrapper');
+          if (existingWrapper) {
+            existingWrapper.classList.add('x-honest-note-wrapper--profile');
+          }
           if (notes) {
             existingIndicator.classList.add('has-note');
           } else {
