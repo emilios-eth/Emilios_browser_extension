@@ -78,7 +78,7 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
   line-height: 1;
-  color: #e7e9ea;
+  color: #e7e9ea !important;
 }
 
 body.show-personal-notes .x-honest-note-btn {
@@ -92,7 +92,7 @@ body.show-personal-notes .x-honest-note-btn {
 /* Green pencil when note exists */
 .x-honest-note-btn.has-note {
   opacity: 0.9;
-  color: #00c853;
+  color: #00c853 !important;
 }
 
 .x-honest-note-btn.has-note:hover {
@@ -107,7 +107,7 @@ body.show-personal-notes .x-honest-note-btn {
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
   line-height: 1;
-  color: #e7e9ea;
+  color: #e7e9ea !important;
 }
 
 body.show-report-ad .x-honest-report-btn {
@@ -760,6 +760,7 @@ body.show-report-ad .x-honest-report-btn {
   vertical-align: middle;
   margin-left: 4px;
   line-height: 1;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Fine-tune profile row alignment with display name/checkmark */
@@ -821,10 +822,11 @@ body.show-user-labels .x-honest-label-badges {
 }
 
 .x-honest-label-name {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 1;
   white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* ===== COLLAPSIBLE ACCOUNT LABELS ===== */
