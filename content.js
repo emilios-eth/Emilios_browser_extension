@@ -1463,31 +1463,14 @@ function applyNotesIndicators() {
             openNotesModal(btn.dataset.screenName);
           });
 
-          // Insert on the name row: "Fogo ✓ [icons here]"
-          // Strategy: find the verified badge SVG or the dir="ltr" name text container,
-          // then walk up the DOM to find the row-level div (whose parent's parent = UserName).
-          let nameRow = null;
-          const anchor = profileUserName.querySelector('svg[data-testid="icon-verified"]')
-                      || profileUserName.querySelector('div[dir="ltr"]');
-          if (anchor) {
-            let el = anchor;
-            while (el && el !== profileUserName) {
-              const p = el.parentElement;
-              if (!p) break;
-              const gp = p.parentElement;
-              if (gp === profileUserName) {
-                // el is the name row (grandchild of UserName)
-                nameRow = el;
-                break;
-              }
-              el = p;
-            }
-          }
-          if (nameRow) {
-            nameRow.style.display = 'flex';
-            nameRow.style.alignItems = 'center';
+          // Insert on the name row: "MANI ✓ [icons here]"
+          // The name text lives inside: ... > div(innerFlex) > div[dir="ltr"] > spans
+          // Appending to innerFlex (parent of dir="ltr") places icons right after the name+badge.
+          const nameDirDiv = profileUserName.querySelector('div[dir="ltr"]');
+          if (nameDirDiv && nameDirDiv.parentElement) {
             wrapper.style.flexShrink = '0';
-            nameRow.appendChild(wrapper);
+            wrapper.style.marginLeft = '4px';
+            nameDirDiv.parentElement.appendChild(wrapper);
           } else {
             profileUserName.appendChild(wrapper);
           }
