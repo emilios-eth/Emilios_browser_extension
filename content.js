@@ -1463,23 +1463,29 @@ function applyNotesIndicators() {
             openNotesModal(btn.dataset.screenName);
           });
 
-          // Insert inline on the profile page name row
-          // X profile UserName structure varies but we want to be on the same line
-          // as the display name, checkmark, and affiliate badge.
-          // Strategy: find the name row's inner link container and append there
-          const outerDiv = profileUserName.querySelector(':scope > div');
-          const nameRow = outerDiv ? outerDiv.querySelector(':scope > div') : null;
+          // Insert on the same line as the display name + checkmark/badge.
+          // Strategy: find the display name <a> link inside UserName, then
+          // insert the wrapper as a sibling right after it in its parent container.
+          // This puts our icons right after the name + verification badge.
+          const nameLink = profileUserName.querySelector('a[role="link"] span');
           let inserted = false;
-          if (nameRow) {
-            // Find the innermost flex container in the name row (holds name link + badges)
-            const innerFlex = nameRow.querySelector(':scope > div') || nameRow;
-            wrapper.style.marginLeft = '4px';
-            wrapper.style.flexShrink = '0';
-            innerFlex.appendChild(wrapper);
-            inserted = true;
+          if (nameLink) {
+            // Walk up to the <a> tag, then to its parent (the flex row holding name + badges)
+            const aTag = nameLink.closest('a[role="link"]');
+            if (aTag && aTag.parentElement) {
+              const row = aTag.parentElement;
+              // Ensure the row is a flex container so our wrapper sits inline
+              const cs = window.getComputedStyle(row);
+              if (cs.display !== 'flex' && cs.display !== 'inline-flex') {
+                row.style.display = 'flex';
+                row.style.alignItems = 'center';
+              }
+              wrapper.style.flexShrink = '0';
+              row.appendChild(wrapper);
+              inserted = true;
+            }
           }
           if (!inserted) {
-            // Last-resort fallback
             profileUserName.appendChild(wrapper);
           }
         } else {
