@@ -1464,11 +1464,25 @@ function applyNotesIndicators() {
           });
 
           // Insert on the name row: "Fogo ✓ [icons here]"
-          // X profile DOM: [data-testid="UserName"] > div(column) > div(nameRow), div(handleRow)
-          // The name row is the FIRST child div of the column div.
-          // There is no <a> link on the profile page name, so we target by structure.
-          const column = profileUserName.querySelector(':scope > div');
-          const nameRow = column ? column.children[0] : null;
+          // Strategy: find the verified badge SVG or the dir="ltr" name text container,
+          // then walk up the DOM to find the row-level div (whose parent's parent = UserName).
+          let nameRow = null;
+          const anchor = profileUserName.querySelector('svg[data-testid="icon-verified"]')
+                      || profileUserName.querySelector('div[dir="ltr"]');
+          if (anchor) {
+            let el = anchor;
+            while (el && el !== profileUserName) {
+              const p = el.parentElement;
+              if (!p) break;
+              const gp = p.parentElement;
+              if (gp === profileUserName) {
+                // el is the name row (grandchild of UserName)
+                nameRow = el;
+                break;
+              }
+              el = p;
+            }
+          }
           if (nameRow) {
             nameRow.style.display = 'flex';
             nameRow.style.alignItems = 'center';
