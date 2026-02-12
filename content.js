@@ -1166,6 +1166,22 @@ function createLabelBadges(labels) {
   return html;
 }
 
+// Reserved X routes (not user screen names)
+const RESERVED_ROUTES = ['home', 'explore', 'notifications', 'messages', 'i', 'settings', 'search', 'compose'];
+
+// Extract screen name from a container element
+function getScreenName(container) {
+  const userLink = container.querySelector('a[href^="/"][role="link"]');
+  if (userLink) {
+    const href = userLink.getAttribute('href');
+    const match = href.match(/^\/([^\/]+)/);
+    if (match && !RESERVED_ROUTES.includes(match[1])) {
+      return match[1];
+    }
+  }
+  return null;
+}
+
 // Apply note indicators to usernames
 function applyNotesIndicators() {
   // Timeline and sidebar
@@ -1341,7 +1357,7 @@ function applyNotesIndicators() {
     const pathMatch = window.location.pathname.match(/^\/([^\/]+)/);
     if (pathMatch) {
       const screenName = pathMatch[1];
-      if (!['home', 'explore', 'notifications', 'messages', 'i', 'settings', 'search', 'compose'].includes(screenName)) {
+      if (!RESERVED_ROUTES.includes(screenName)) {
         const notes = getNotes(screenName);
         const labels = getLabels(screenName);
         const profileHasScreenshots = hasScreenshots(screenName);
