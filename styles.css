@@ -800,9 +800,10 @@ body.show-report-ad .x-honest-report-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 4px 6px;
-  border-radius: 9999px;
+  background: transparent;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1.5px solid rgba(113, 118, 123, 0.5);
 }
 
 .x-honest-actions-pill svg {
