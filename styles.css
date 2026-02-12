@@ -757,17 +757,15 @@ body.show-report-ad .x-honest-report-btn {
   display: inline-flex;
   align-items: center;
   gap: 0;
-  vertical-align: middle;
+  vertical-align: bottom;
   margin-left: 4px;
   line-height: 1;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  position: relative;
-  top: 2px;
 }
 
 /* Fine-tune profile row alignment with display name/checkmark */
 .x-honest-note-wrapper--profile {
-  top: 0;
+  vertical-align: middle;
   transform: translateY(-2px);
 }
 
@@ -791,7 +789,7 @@ body.show-report-ad .x-honest-report-btn {
   align-items: center;
   margin-left: 6px;
   padding-left: 6px;
-  border-left: 1.5px solid rgba(113, 118, 123, 0.4);
+  border-left: 2px solid rgba(113, 118, 123, 0.5);
   height: 16px;
 }
 
