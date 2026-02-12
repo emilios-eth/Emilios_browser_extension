@@ -36,17 +36,9 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
 .x-honest-note-wrapper svg,
 .x-honest-modal-title svg {
   display: inline-block;
-  vertical-align: -0.15em;
+  vertical-align: middle;
   width: 1em;
   height: 1em;
-}
-
-/* Larger icons inside label badges (inline next to usernames) */
-.x-honest-label-badge svg {
-  display: inline-block;
-  vertical-align: -0.15em;
-  width: 1.3em;
-  height: 1.3em;
 }
 
 /* Larger icons inside label buttons (modal selector) */
@@ -78,13 +70,12 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
 /* Pencil button for notes */
 .x-honest-note-btn {
   cursor: pointer;
-  font-size: 19px;
-  margin-left: 4px;
+  font-size: 18px;
   opacity: 0.6;
   transition: opacity 0.2s, color 0.2s;
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
-  vertical-align: middle;
+  line-height: 1;
   color: #1d9bf0;
 }
 
@@ -109,13 +100,12 @@ body.show-personal-notes .x-honest-note-btn {
 /* Report Ad button */
 .x-honest-report-btn {
   cursor: pointer;
-  font-size: 17px;
-  margin-left: 3px;
+  font-size: 18px;
   opacity: 0.6;
   transition: opacity 0.2s, color 0.2s;
   display: none; /* Hidden by default, shown via body class */
   align-items: center;
-  vertical-align: middle;
+  line-height: 1;
   color: #1d9bf0;
 }
 
@@ -765,21 +755,32 @@ body.show-report-ad .x-honest-report-btn {
 .x-honest-note-wrapper {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   vertical-align: middle;
   margin-left: 2px;
 }
 
-/* Label badges next to pencil */
+/* Label badges next to pencil — separated by a subtle divider */
 .x-honest-label-badges {
   display: none; /* Hidden by default, shown via body class */
   gap: 3px;
   align-items: center;
   vertical-align: middle;
+  margin-left: 2px;
+  padding-left: 6px;
+  border-left: 1px solid rgba(83, 100, 113, 0.4);
 }
 
 body.show-user-labels .x-honest-label-badges {
   display: inline-flex;
+}
+
+/* Hide divider when badges container is empty */
+.x-honest-label-badges:empty {
+  display: none !important;
+  border: none;
+  margin: 0;
+  padding: 0;
 }
 
 .x-honest-label-badge {
@@ -787,9 +788,10 @@ body.show-user-labels .x-honest-label-badges {
   align-items: center;
   justify-content: center;
   vertical-align: middle;
-  opacity: 0.7;
+  opacity: 0.75;
   transition: opacity 0.2s;
   cursor: default;
+  line-height: 1;
 }
 
 .x-honest-label-badge:hover {
@@ -797,8 +799,8 @@ body.show-user-labels .x-honest-label-badges {
 }
 
 .x-honest-label-badge svg {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
 }
 
