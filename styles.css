@@ -760,27 +760,25 @@ body.show-report-ad .x-honest-report-btn {
   margin-left: 2px;
 }
 
-/* Label badges next to pencil — separated by a subtle divider */
+/* Label badges container — subtle semi-transparent pill */
 .x-honest-label-badges {
   display: none; /* Hidden by default, shown via body class */
-  gap: 3px;
+  gap: 4px;
   align-items: center;
   vertical-align: middle;
-  margin-left: 2px;
-  padding-left: 6px;
-  border-left: 1px solid rgba(83, 100, 113, 0.4);
+  margin-left: 3px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 body.show-user-labels .x-honest-label-badges {
   display: inline-flex;
 }
 
-/* Hide divider when badges container is empty */
+/* Hide container when empty */
 .x-honest-label-badges:empty {
   display: none !important;
-  border: none;
-  margin: 0;
-  padding: 0;
 }
 
 .x-honest-label-badge {
@@ -788,7 +786,7 @@ body.show-user-labels .x-honest-label-badges {
   align-items: center;
   justify-content: center;
   vertical-align: middle;
-  opacity: 0.75;
+  opacity: 0.85;
   transition: opacity 0.2s;
   cursor: default;
   line-height: 1;
@@ -799,8 +797,8 @@ body.show-user-labels .x-honest-label-badges {
 }
 
 .x-honest-label-badge svg {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   flex-shrink: 0;
 }
 
