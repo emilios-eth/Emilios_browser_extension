@@ -33,7 +33,12 @@ body.hide-vanity-metrics svg[aria-label="Verified account"] {
 /* ===== INLINE SVG ICON STYLES ===== */
 
 /* SVG icons inherit color via currentColor on stroke */
-.x-honest-note-wrapper svg,
+.x-honest-note-wrapper svg {
+  display: block;
+  width: 1em;
+  height: 1em;
+}
+
 .x-honest-modal-title svg {
   display: inline-block;
   vertical-align: middle;
@@ -756,8 +761,10 @@ body.show-report-ad .x-honest-report-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  vertical-align: middle;
-  margin-left: 2px;
+  vertical-align: bottom;
+  margin-left: 4px;
+  position: relative;
+  top: -1px;
 }
 
 /* Label badges container — subtle semi-transparent pill */
@@ -765,11 +772,10 @@ body.show-report-ad .x-honest-report-btn {
   display: none; /* Hidden by default, shown via body class */
   gap: 4px;
   align-items: center;
-  vertical-align: middle;
-  margin-left: 3px;
-  padding: 2px 6px;
+  margin-left: 2px;
+  padding: 1px 5px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 body.show-user-labels .x-honest-label-badges {
@@ -785,7 +791,6 @@ body.show-user-labels .x-honest-label-badges {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  vertical-align: middle;
   opacity: 0.85;
   transition: opacity 0.2s;
   cursor: default;
