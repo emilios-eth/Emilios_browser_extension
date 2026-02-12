@@ -759,6 +759,12 @@ body.show-report-ad .x-honest-report-btn {
   gap: 5px;
   vertical-align: middle;
   margin-left: 4px;
+  line-height: 1;
+}
+
+/* Fine-tune profile row alignment with display name/checkmark */
+.x-honest-note-wrapper--profile {
+  transform: translateY(-2px);
 }
 
 /* Container for action buttons (edit / ad) — no visible pill */
@@ -774,17 +780,14 @@ body.show-report-ad .x-honest-report-btn {
   height: 20px;
 }
 
-/* Label badges container — Follow-back button style */
+/* Label badges row with subtle separator (no container) */
 .x-honest-label-badges {
   display: none; /* Hidden by default, shown via body class */
-  gap: 3px;
+  gap: 4px;
   align-items: center;
-  padding: 0 7px;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: transparent;
-  height: 22px;
-  box-sizing: border-box;
+  margin-left: 2px;
+  padding-left: 6px;
+  border-left: 1px solid rgba(113, 118, 123, 0.45);
 }
 
 body.show-user-labels .x-honest-label-badges {
@@ -811,8 +814,8 @@ body.show-user-labels .x-honest-label-badges {
 }
 
 .x-honest-label-badge svg {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
 }
 
