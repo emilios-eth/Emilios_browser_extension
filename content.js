@@ -1611,16 +1611,19 @@ function init() {
   // Detect X theme for adaptive icon colors
   detectXTheme();
 
-  chrome.storage.sync.get(['hideMetrics', 'showNotes', 'showLabels', 'showReportAd'], function(result) {
+  chrome.storage.sync.get(['hideMetrics', 'showNotes', 'showLabels', 'showReportAd', 'iconTheme'], function(result) {
     const hideMetrics = result.hideMetrics !== false;
     const showNotes = result.showNotes !== false;
     const showLabels = result.showLabels !== false;
     const showReportAd = result.showReportAd !== false;
+    const iconTheme = result.iconTheme || 'dark';
 
     applyMetricsState(hideMetrics);
     applyNotesState(showNotes);
     applyLabelsState(showLabels);
     applyReportAdState(showReportAd);
+    document.body.classList.toggle('rcrd-theme-light', iconTheme === 'light');
+    document.body.classList.toggle('rcrd-theme-dark', iconTheme === 'dark');
   });
 
   // Initialize notes system
@@ -1647,6 +1650,11 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
   }
   if (changes.showReportAd) {
     applyReportAdState(changes.showReportAd.newValue);
+  }
+  if (changes.iconTheme) {
+    const theme = changes.iconTheme.newValue || 'dark';
+    document.body.classList.toggle('rcrd-theme-light', theme === 'light');
+    document.body.classList.toggle('rcrd-theme-dark', theme === 'dark');
   }
 });
 

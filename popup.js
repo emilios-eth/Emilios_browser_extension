@@ -37,6 +37,31 @@ exportBtn.addEventListener('click', function() {
   chrome.tabs.create({ url: chrome.runtime.getURL('dashboard.html') });
 });
 
+// Theme toggle (dark/light for inline icons)
+const themeDark = document.getElementById('themeDark');
+const themeLight = document.getElementById('themeLight');
+
+chrome.storage.sync.get(['iconTheme'], function(result) {
+  const theme = result.iconTheme || 'dark';
+  if (theme === 'light') {
+    themeLight.classList.add('active');
+  } else {
+    themeDark.classList.add('active');
+  }
+});
+
+themeDark.addEventListener('click', function() {
+  themeDark.classList.add('active');
+  themeLight.classList.remove('active');
+  chrome.storage.sync.set({ iconTheme: 'dark' });
+});
+
+themeLight.addEventListener('click', function() {
+  themeLight.classList.add('active');
+  themeDark.classList.remove('active');
+  chrome.storage.sync.set({ iconTheme: 'light' });
+});
+
 // ===== Custom tooltips =====
 (function() {
   const tip = document.getElementById('tooltip');
