@@ -817,10 +817,7 @@ body.show-report-ad .x-honest-report-btn {
   transform: translateY(-2px);
 }
 
-/* On profile page, show label text */
-.x-honest-note-wrapper--profile .x-honest-label-name {
-  display: inline !important;
-}
+/* Profile labels also icons-only to prevent overflow */
 
 /* Container for action buttons (edit / ad) */
 .x-honest-actions-pill {
