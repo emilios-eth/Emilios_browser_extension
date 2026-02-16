@@ -3,7 +3,7 @@
   "name": "RCRD",
   "version": "1.5",
   "description": "The memory layer for X",
-  "permissions": ["storage", "activeTab", "tabs", "downloads", "alarms"],
+  "permissions": ["storage", "activeTab", "downloads", "alarms"],
   "web_accessible_resources": [
     {
       "resources": ["dashboard.html", "dashboard.js"],
