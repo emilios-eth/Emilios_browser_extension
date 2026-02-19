@@ -16,26 +16,36 @@ chrome.commands.onCommand.addListener((command) => {
 });
 
 // ===== AUTO BACKUP =====
+// Layer 1: Sync backup (chrome.storage.sync) — survives reinstalls, syncs across devices
+// Layer 2: Local rolling snapshots (chrome.storage.local) — 7 daily snapshots, silent
+// Layer 3: Manual export (dashboard) — user-initiated file download
 
-// --- Sync backup: mirror userNotes to chrome.storage.sync (survives reinstalls) ---
+// --- Sync backup: mirror userNotes to chrome.storage.sync ---
 // sync has 100KB total / 8KB per key, so we chunk the data
 
 function syncBackup(notes) {
   const dataStr = JSON.stringify(notes);
-  const CHUNK_SIZE = 7000; // leave room under 8KB per-key limit
+  if (dataStr.length > 90000) {
+    console.warn('[RCRD] Data too large for sync backup (' + dataStr.length + ' bytes), skipping sync');
+    return;
+  }
+  const CHUNK_SIZE = 7000;
   const chunks = [];
   for (let i = 0; i < dataStr.length; i += CHUNK_SIZE) {
     chunks.push(dataStr.slice(i, i + CHUNK_SIZE));
   }
   const syncData = { _backupChunks: chunks.length };
   chunks.forEach((chunk, i) => { syncData[`_backup_${i}`] = chunk; });
-  // Clear old chunks that may exceed new count
   chrome.storage.sync.get(null, (existing) => {
     const keysToRemove = Object.keys(existing).filter(
       k => k.startsWith('_backup_') && parseInt(k.split('_')[2]) >= chunks.length
     );
     if (keysToRemove.length > 0) chrome.storage.sync.remove(keysToRemove);
-    chrome.storage.sync.set(syncData);
+    chrome.storage.sync.set(syncData, () => {
+      if (chrome.runtime.lastError) {
+        console.warn('[RCRD] Sync backup failed:', chrome.runtime.lastError.message);
+      }
+    });
   });
 }
 
@@ -59,59 +69,50 @@ function restoreFromSync(callback) {
   });
 }
 
-// --- On every data change: sync + daily file backup ---
+// --- Local rolling snapshots: save daily snapshot in chrome.storage.local ---
+// Keys: _snapshot_YYYY-MM-DD, keeps last 7
+
+function saveLocalSnapshot(notes) {
+  const today = new Date().toISOString().slice(0, 10);
+  chrome.storage.local.get(['_lastSnapshotDate'], (result) => {
+    if (result._lastSnapshotDate === today) return;
+    const snapshotKey = '_snapshot_' + today;
+    chrome.storage.local.set({
+      [snapshotKey]: JSON.stringify(notes),
+      _lastSnapshotDate: today
+    }, () => {
+      if (chrome.runtime.lastError) {
+        console.warn('[RCRD] Snapshot save failed:', chrome.runtime.lastError.message);
+        return;
+      }
+      cleanOldSnapshots();
+    });
+  });
+}
+
+function cleanOldSnapshots() {
+  chrome.storage.local.get(null, (all) => {
+    const snapshotKeys = Object.keys(all)
+      .filter(k => k.startsWith('_snapshot_'))
+      .sort()
+      .reverse();
+    if (snapshotKeys.length <= 7) return;
+    const toRemove = snapshotKeys.slice(7);
+    chrome.storage.local.remove(toRemove);
+  });
+}
+
+// --- On every data change: sync + local snapshot ---
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local' || !changes.userNotes) return;
   const notes = changes.userNotes.newValue || {};
   if (Object.keys(notes).length === 0) return;
-  // Always mirror to sync storage
   syncBackup(notes);
-  // File backup: max once per day
-  fileBackupIfNeeded(notes);
+  saveLocalSnapshot(notes);
 });
 
-function fileBackupIfNeeded(notes) {
-  chrome.storage.sync.get(['autoBackup'], (settings) => {
-    if (settings.autoBackup === false) return;
-    chrome.storage.local.get(['lastBackupDate'], (result) => {
-      const today = new Date().toISOString().slice(0, 10);
-      if (result.lastBackupDate === today) return;
-      downloadBackupFile(notes, today);
-    });
-  });
-}
-
-function downloadBackupFile(notes, today) {
-  const dataStr = JSON.stringify(notes, null, 2);
-  const blob = new Blob([dataStr], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  chrome.downloads.download({
-    url: url,
-    filename: `RCRD/rcrd-backup-${today}.json`,
-    saveAs: false
-  }, () => {
-    chrome.storage.local.set({ lastBackupDate: today });
-    URL.revokeObjectURL(url);
-    cleanOldBackups();
-  });
-}
-
-// --- Rolling backups: keep last 7 days, delete older ---
-
-function cleanOldBackups() {
-  chrome.downloads.search({ filenameRegex: 'RCRD[/\\\\]rcrd-backup-.*\\.json$' }, (items) => {
-    if (!items || items.length <= 7) return;
-    const sorted = items.sort((a, b) => b.filename.localeCompare(a.filename));
-    const toDelete = sorted.slice(7);
-    toDelete.forEach((item) => {
-      chrome.downloads.removeFile(item.id);
-      chrome.downloads.erase({ id: item.id });
-    });
-  });
-}
-
-// --- Daily alarm as fallback (in case onChanged doesn't fire) ---
+// --- Daily alarm as fallback ---
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.alarms.create('dailyBackup', {
@@ -137,7 +138,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
       const notes = result.userNotes || {};
       if (Object.keys(notes).length === 0) return;
       syncBackup(notes);
-      fileBackupIfNeeded(notes);
+      saveLocalSnapshot(notes);
     });
   }
 });
@@ -149,7 +150,6 @@ chrome.runtime.onInstalled.addListener((details) => {
     chrome.storage.local.get(['userNotes'], (result) => {
       const notes = result.userNotes || {};
       if (Object.keys(notes).length > 0) {
-        // Data exists, just make sure sync is up to date
         syncBackup(notes);
         return;
       }
@@ -174,6 +174,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ dataUrl: dataUrl });
       }
     });
-    return true; // Keep message channel open for async response
+    return true;
   }
 });

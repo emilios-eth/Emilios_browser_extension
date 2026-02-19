@@ -49,20 +49,26 @@ On Mac, use `Cmd` instead of `Ctrl`.
 
 ## Backup & Restore
 
-Your records are stored locally in your browser. To keep them safe:
+Your records are protected by three layers of automatic backup:
 
-**Automatic backup:**
-- Enable via the cloud icon in the dashboard
-- Saves a backup file daily to your Downloads folder
-- Filename: `rcrd-backup-YYYY-MM-DD.json`
+**1. Cloud sync (automatic)**
+- Every data change is instantly mirrored to your browser's sync storage
+- Tied to your browser account (Google/Brave) and syncs across devices
+- Survives extension reinstalls, folder renames, and browser resets
+- Auto-restores from sync when the extension detects empty local storage
 
-**Manual backup:**
+**2. Local snapshots (automatic)**
+- Saves a daily snapshot of your data inside the extension's own storage
+- Rolling retention: keeps the last 7 daily snapshots
+- Completely silent -- no download prompts, no files to manage
+
+**3. Manual export**
 1. Open the dashboard (`Ctrl+Shift+E`)
-2. Click the export button to save a JSON file
+2. Click the export button to download a JSON backup file
 
-**To restore from backup:**
-1. Click the import button and select your JSON file
-2. Choose to **Merge** (add to existing) or **Replace** (overwrite all)
+**To restore:**
+- **From snapshot** -- Click the clock icon in the dashboard to pick a daily snapshot
+- **From file** -- Click the import button, select your JSON, then choose **Merge** or **Replace**
 
 ## Privacy
 

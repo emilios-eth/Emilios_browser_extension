@@ -1529,6 +1529,7 @@ function applyNotesIndicators() {
   }
 
   document.addEventListener('mouseenter', function(e) {
+    if (!e.target || !e.target.closest) return;
     const target = e.target.closest('[data-rcrd-tooltip]');
     if (!target) return;
     clearTimeout(hideTimeout);
@@ -1558,6 +1559,7 @@ function applyNotesIndicators() {
   }, true);
 
   document.addEventListener('mouseleave', function(e) {
+    if (!e.target || !e.target.closest) return;
     const target = e.target.closest('[data-rcrd-tooltip]');
     if (!target || !tipEl) return;
     tipEl.classList.remove('visible');
@@ -1681,3 +1683,4 @@ if (document.body) {
     observer.observe(document.body, { childList: true, subtree: true });
   });
 }
+

@@ -318,23 +318,8 @@ function setupEventListeners() {
   };
   document.getElementById('importFile').onchange = importBackup;
 
-  // Auto backup toggle button
-  var autoBackupBtn = document.getElementById('autoBackupBtn');
-  chrome.storage.sync.get(['autoBackup'], function(result) {
-    var enabled = result.autoBackup !== false;
-    autoBackupBtn.classList.toggle('fab-active', enabled);
-    autoBackupBtn.dataset.tooltip = enabled ? 'Auto backup: ON' : 'Auto backup: OFF';
-  });
-  autoBackupBtn.onclick = function() {
-    chrome.storage.sync.get(['autoBackup'], function(result) {
-      var enabled = result.autoBackup !== false;
-      var newVal = !enabled;
-      chrome.storage.sync.set({ autoBackup: newVal }, function() {
-        autoBackupBtn.classList.toggle('fab-active', newVal);
-        autoBackupBtn.dataset.tooltip = newVal ? 'Auto backup: ON' : 'Auto backup: OFF';
-      });
-    });
-  };
+  // Restore from snapshot button
+  document.getElementById('snapshotBtn').onclick = showSnapshotPicker;
 }
 
 // Export all notes to JSON file
@@ -442,6 +427,57 @@ function togglePopup(id) {
   if (!wasShown) {
     el.classList.add('show');
   }
+}
+
+// Show snapshot picker to restore from daily auto-backups
+function showSnapshotPicker() {
+  chrome.storage.local.get(null, function(all) {
+    var snapshots = Object.keys(all)
+      .filter(function(k) { return k.startsWith('_snapshot_'); })
+      .sort()
+      .reverse();
+
+    if (snapshots.length === 0) {
+      showStatus('No snapshots available yet');
+      return;
+    }
+
+    var buttons = snapshots.slice(0, 4).map(function(key) {
+      var date = key.replace('_snapshot_', '');
+      return { label: date, style: 'primary', value: key };
+    });
+    buttons.unshift({ label: 'Cancel', style: 'secondary', value: null });
+
+    showConfirm(
+      'Restore from snapshot',
+      'Choose a daily snapshot to restore from (' + snapshots.length + ' available). This will replace your current data.',
+      buttons
+    ).then(function(choice) {
+      if (!choice) return;
+      try {
+        var restored = JSON.parse(all[choice]);
+        var count = Object.keys(restored).length;
+        showConfirm(
+          'Confirm restore',
+          'Restore ' + count + ' user(s) from this snapshot? Current data will be replaced.',
+          [
+            { label: 'Cancel', style: 'secondary', value: null },
+            { label: 'Restore', style: 'danger', value: 'yes' }
+          ]
+        ).then(function(confirmed) {
+          if (confirmed !== 'yes') return;
+          saveStateForUndo(function() {
+            chrome.storage.local.set({ userNotes: restored }, function() {
+              showStatus('Restored from snapshot!');
+              loadData();
+            });
+          });
+        });
+      } catch (err) {
+        showStatus('Error: corrupted snapshot');
+      }
+    });
+  });
 }
 
 function closeAllPopups() {
