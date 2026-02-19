@@ -147,6 +147,17 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
 .modal img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
 .modal-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; cursor: pointer; }
 
+/* Confirm dialog */
+.confirm-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91,112,131,0.4); z-index: 2000; justify-content: center; align-items: center; }
+.confirm-overlay.show { display: flex; }
+.confirm-box { background: #16181c; border: 1px solid #2f3336; border-radius: 16px; padding: 24px; max-width: 320px; width: 90%; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.confirm-box h3 { margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #e7e9ea; }
+.confirm-box p { margin: 0 0 20px 0; font-size: 13px; color: #71767b; line-height: 1.5; }
+.confirm-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.confirm-actions .btn { min-width: 80px; text-align: center; }
+.btn-danger { background: #f4212e; color: #fff; border: none; }
+.btn-danger:hover { background: #dc1d28; }
+
 /* Label picker popup */
 .label-picker { display: none; position: absolute; background: #16181c; border: 1px solid #2f3336; border-radius: 16px; padding: 10px; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
 .label-picker.show { display: block; }
@@ -308,6 +319,14 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
 
 <div class="label-picker" id="labelPicker"></div>
 <div class="label-picker" id="postLabelPicker"></div>
+
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3 id="confirmTitle"></h3>
+    <p id="confirmMsg"></p>
+    <div class="confirm-actions" id="confirmActions"></div>
+  </div>
+</div>
 
 <script src="dashboard.js"></script>
 </body>

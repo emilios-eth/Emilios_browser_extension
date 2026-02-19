@@ -344,15 +344,15 @@ function exportBackup() {
     var dataStr = JSON.stringify(notes, null, 2);
     var blob = new Blob([dataStr], { type: 'application/json' });
     var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
     var date = new Date().toISOString().slice(0, 10);
-    a.href = url;
-    a.download = 'rcrd-backup-' + date + '.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showStatus('Backup exported!');
+    chrome.downloads.download({
+      url: url,
+      filename: 'RCRD/rcrd-backup-' + date + '.json',
+      saveAs: false
+    }, function() {
+      URL.revokeObjectURL(url);
+      showStatus('Backup exported!');
+    });
   });
 }
 
@@ -366,75 +366,72 @@ function importBackup(e) {
     try {
       var importedNotes = JSON.parse(event.target.result);
 
-      // Validate structure
       if (typeof importedNotes !== 'object') {
         showStatus('Invalid backup file');
         return;
       }
 
-      // Ask user how to handle import
-      var choice = confirm('How do you want to import?\n\nOK = Merge with existing records\nCancel = Replace all records (WARNING: deletes current records)');
+      var count = Object.keys(importedNotes).length;
+      showConfirm('Import backup', 'Found ' + count + ' user(s) in backup. How do you want to import?', [
+        { label: 'Cancel', style: 'secondary', value: null },
+        { label: 'Replace all', style: 'danger', value: 'replace' },
+        { label: 'Merge', style: 'primary', value: 'merge' }
+      ]).then(function(choice) {
+        if (!choice) return;
 
-      if (choice) {
-        // Merge: combine imported with existing
-        chrome.storage.local.get(['userNotes'], function(result) {
-          var existing = result.userNotes || {};
+        if (choice === 'merge') {
+          chrome.storage.local.get(['userNotes'], function(result) {
+            var existing = result.userNotes || {};
 
-          // Merge each user
-          for (var handle in importedNotes) {
-            if (existing[handle]) {
-              // Merge entries
-              var existingEntries = existing[handle].entries || [];
-              var importedEntries = importedNotes[handle].entries || [];
+            for (var handle in importedNotes) {
+              if (existing[handle]) {
+                var existingEntries = existing[handle].entries || [];
+                var importedEntries = importedNotes[handle].entries || [];
 
-              // Add imported entries that don't exist
-              importedEntries.forEach(function(entry) {
-                var exists = existingEntries.some(function(e) {
-                  return e.text === entry.text && e.date === entry.date;
+                importedEntries.forEach(function(entry) {
+                  var exists = existingEntries.some(function(e) {
+                    return e.text === entry.text && e.date === entry.date;
+                  });
+                  if (!exists) {
+                    existingEntries.push(entry);
+                  }
                 });
-                if (!exists) {
-                  existingEntries.push(entry);
-                }
-              });
 
-              existing[handle].entries = existingEntries;
+                existing[handle].entries = existingEntries;
 
-              // Merge labels
-              var existingLabels = existing[handle].labels || [];
-              var importedLabels = importedNotes[handle].labels || [];
-              importedLabels.forEach(function(label) {
-                if (existingLabels.indexOf(label) === -1) {
-                  existingLabels.push(label);
-                }
-              });
-              existing[handle].labels = existingLabels;
-            } else {
-              // New user, add entirely
-              existing[handle] = importedNotes[handle];
+                var existingLabels = existing[handle].labels || [];
+                var importedLabels = importedNotes[handle].labels || [];
+                importedLabels.forEach(function(label) {
+                  if (existingLabels.indexOf(label) === -1) {
+                    existingLabels.push(label);
+                  }
+                });
+                existing[handle].labels = existingLabels;
+              } else {
+                existing[handle] = importedNotes[handle];
+              }
             }
-          }
 
-          chrome.storage.local.set({ userNotes: existing }, function() {
-            showStatus('Backup merged!');
-            loadData();
+            chrome.storage.local.set({ userNotes: existing }, function() {
+              showStatus('Backup merged!');
+              loadData();
+            });
           });
-        });
-      } else {
-        // Replace: overwrite everything
-        saveStateForUndo(function() {
-          chrome.storage.local.set({ userNotes: importedNotes }, function() {
-            showStatus('Backup restored!');
-            loadData();
+        } else {
+          saveStateForUndo(function() {
+            chrome.storage.local.set({ userNotes: importedNotes }, function() {
+              showStatus('Backup restored!');
+              loadData();
+            });
           });
-        });
-      }
+        }
+      });
     } catch (err) {
       showStatus('Error reading file: ' + err.message);
     }
   };
   reader.readAsText(file);
 
-  // Reset file input so same file can be selected again
   e.target.value = '';
 }
 
@@ -1016,41 +1013,47 @@ function startInlineEdit(editBtn, handle, entryIndex) {
 }
 
 function deleteEntry(handle, entryIndex) {
-  if (!confirm('Delete this record?')) return;
+  showConfirm('Delete record', 'Are you sure you want to delete this record?', [
+    { label: 'Cancel', style: 'secondary', value: false },
+    { label: 'Delete', style: 'danger', value: true }
+  ]).then(function(confirmed) {
+    if (!confirmed) return;
+    saveStateForUndo(function() {
+      chrome.storage.local.get(['userNotes'], function(result) {
+        var notes = result.userNotes || {};
+        var userData = notes[handle];
+        if (!userData || !userData.entries) return;
 
-  // Save state for undo before deleting
-  saveStateForUndo(function() {
-    chrome.storage.local.get(['userNotes'], function(result) {
-      var notes = result.userNotes || {};
-      var userData = notes[handle];
-      if (!userData || !userData.entries) return;
+        userData.entries.splice(entryIndex, 1);
+        if (userData.entries.length === 0 && (!userData.labels || userData.labels.length === 0)) {
+          delete notes[handle];
+        } else {
+          notes[handle] = userData;
+        }
 
-      userData.entries.splice(entryIndex, 1);
-      if (userData.entries.length === 0 && (!userData.labels || userData.labels.length === 0)) {
-        delete notes[handle];
-      } else {
-        notes[handle] = userData;
-      }
-
-      chrome.storage.local.set({ userNotes: notes }, function() {
-        showStatus('Deleted');
-        loadData();
+        chrome.storage.local.set({ userNotes: notes }, function() {
+          showStatus('Deleted');
+          loadData();
+        });
       });
     });
   });
 }
 
 function deleteUser(handle) {
-  if (!confirm('Delete ALL data for @' + handle + '?')) return;
-
-  // Save state for undo before deleting user
-  saveStateForUndo(function() {
-    chrome.storage.local.get(['userNotes'], function(result) {
-      var notes = result.userNotes || {};
-      delete notes[handle];
-      chrome.storage.local.set({ userNotes: notes }, function() {
-        showStatus('User deleted');
-        loadData();
+  showConfirm('Delete user', 'Delete ALL data for @' + handle + '?', [
+    { label: 'Cancel', style: 'secondary', value: false },
+    { label: 'Delete all', style: 'danger', value: true }
+  ]).then(function(confirmed) {
+    if (!confirmed) return;
+    saveStateForUndo(function() {
+      chrome.storage.local.get(['userNotes'], function(result) {
+        var notes = result.userNotes || {};
+        delete notes[handle];
+        chrome.storage.local.set({ userNotes: notes }, function() {
+          showStatus('User deleted');
+          loadData();
+        });
       });
     });
   });
@@ -1229,6 +1232,36 @@ function formatDate(d) {
 
 function escapeHtml(s) {
   return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// Custom confirm dialog — returns a promise
+// buttons: array of { label, style, value }
+// style: 'primary' | 'secondary' | 'danger'
+function showConfirm(title, message, buttons) {
+  return new Promise(function(resolve) {
+    var overlay = document.getElementById('confirmOverlay');
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMsg').textContent = message;
+    var actions = document.getElementById('confirmActions');
+    actions.innerHTML = '';
+    buttons.forEach(function(btn) {
+      var b = document.createElement('button');
+      b.textContent = btn.label;
+      b.className = 'btn' + (btn.style === 'danger' ? ' btn-danger' : btn.style === 'secondary' ? ' btn-secondary' : '');
+      b.onclick = function() {
+        overlay.classList.remove('show');
+        resolve(btn.value);
+      };
+      actions.appendChild(b);
+    });
+    overlay.classList.add('show');
+    overlay.onclick = function(e) {
+      if (e.target === overlay) {
+        overlay.classList.remove('show');
+        resolve(null);
+      }
+    };
+  });
 }
 
 function showStatus(msg) {

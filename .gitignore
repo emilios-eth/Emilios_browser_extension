@@ -10,6 +10,11 @@ generate-icons.html
 # Unused font files (using inline SVGs instead)
 *.woff2
 
+# Node modules (sharp for icon resizing)
+node_modules/
+package.json
+package-lock.json
+
 # Windows artifacts
 nul
 Thumbs.db
