@@ -150,7 +150,7 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
 /* Confirm dialog */
 .confirm-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(91,112,131,0.4); z-index: 2000; justify-content: center; align-items: center; }
 .confirm-overlay.show { display: flex; }
-.confirm-box { background: #16181c; border: 1px solid #2f3336; border-radius: 16px; padding: 24px; max-width: 320px; width: 90%; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.confirm-box { background: #16181c; border: 1px solid #2f3336; border-radius: 16px; padding: 24px; max-width: 380px; width: 90%; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
 .confirm-box h3 { margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #e7e9ea; }
 .confirm-box p { margin: 0 0 20px 0; font-size: 13px; color: #71767b; line-height: 1.5; }
 .confirm-actions { display: flex; gap: 8px; justify-content: flex-end; }
@@ -191,6 +191,16 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
 
 .no-data { text-align: center; padding: 40px; color: #536471; }
 .backup-hint { font-size: 11px; color: #536471; margin-left: 8px; }
+
+/* Restore menu options */
+.restore-option { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid #2f3336; border-radius: 12px; background: #000; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 8px; }
+.restore-option:hover { border-color: #1d9bf0; background: rgba(29,155,240,0.06); }
+.restore-option.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+.restore-option-icon { flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; background: rgba(29,155,240,0.1); display: flex; align-items: center; justify-content: center; color: #1d9bf0; }
+.restore-option-icon svg { width: 18px; height: 18px; }
+.restore-option-text { flex: 1; }
+.restore-option-title { font-size: 13px; font-weight: 600; color: #e7e9ea; }
+.restore-option-desc { font-size: 11px; color: #71767b; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -300,14 +310,11 @@ td.col-labels { vertical-align: top; padding-top: 10px; }
   <button class="fab-btn" id="undoBtn" data-tooltip="Undo" disabled>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M4 9H14C17.314 9 20 11.686 20 15C20 18.314 17.314 21 14 21H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 5L4 9L8 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
-  <button class="fab-btn" id="importBtn" data-tooltip="Import">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M12 4.5L12 14.5M12 4.5C12.707 4.5 14.032 6.494 14.5 7M12 4.5C11.293 4.5 9.968 6.494 9.5 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
+  <button class="fab-btn" id="restoreBtn" data-tooltip="Restore">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M4.476 15.063C5.281 18.454 8.353 21 12 21C16.418 21 20 17.418 20 13C20 8.582 16.418 5 12 5C9.147 5 6.637 6.574 5.312 8.907M5.312 8.907L5.5 5.5M5.312 8.907L2 8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M12 8V13L15 15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
   </button>
   <button class="fab-btn" id="exportBtn" data-tooltip="Export">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M12 14.5L12 4.5M12 14.5C11.293 14.5 9.968 12.506 9.5 12M12 14.5C12.707 14.5 14.032 12.506 14.5 12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
-  </button>
-  <button class="fab-btn" id="snapshotBtn" data-tooltip="Restore snapshot">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M4.476 15.063C5.281 18.454 8.353 21 12 21C16.418 21 20 17.418 20 13C20 8.582 16.418 5 12 5C9.147 5 6.637 6.574 5.312 8.907M5.312 8.907L5.5 5.5M5.312 8.907L2 8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M12 8V13L15 15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>
   </button>
 </div>
 <input type="file" id="importFile" accept=".json">

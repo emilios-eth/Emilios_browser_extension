@@ -64,11 +64,13 @@ Your records are protected by three layers of automatic backup:
 
 **3. Manual export**
 1. Open the dashboard (`Ctrl+Shift+E`)
-2. Click the export button to download a JSON backup file
+2. Click the export button -- saves to `Downloads/RCRD Backups/`
 
 **To restore:**
-- **From snapshot** -- Click the clock icon in the dashboard to pick a daily snapshot
-- **From file** -- Click the import button, select your JSON, then choose **Merge** or **Replace**
+Click the restore button (clock icon) in the dashboard to choose from:
+- **From snapshot** -- Pick a recent daily snapshot
+- **From browser sync** -- Pull from your browser account's synced backup
+- **From file** -- Import a JSON backup file, then choose **Merge** or **Replace**
 
 ## Privacy
 

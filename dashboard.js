@@ -311,18 +311,13 @@ function setupEventListeners() {
     }
   });
 
-  // Export/Import buttons
+  // Export / Restore buttons
   document.getElementById('exportBtn').onclick = exportBackup;
-  document.getElementById('importBtn').onclick = function() {
-    document.getElementById('importFile').click();
-  };
+  document.getElementById('restoreBtn').onclick = showRestoreMenu;
   document.getElementById('importFile').onchange = importBackup;
-
-  // Restore from snapshot button
-  document.getElementById('snapshotBtn').onclick = showSnapshotPicker;
 }
 
-// Export all notes to JSON file
+// Export all notes to JSON file — saves to Downloads/RCRD Backups/
 function exportBackup() {
   chrome.storage.local.get(['userNotes'], function(result) {
     var notes = result.userNotes || {};
@@ -330,18 +325,19 @@ function exportBackup() {
     var blob = new Blob([dataStr], { type: 'application/json' });
     var url = URL.createObjectURL(blob);
     var date = new Date().toISOString().slice(0, 10);
+    var filename = 'RCRD Backups/rcrd-backup-' + date + '.json';
     chrome.downloads.download({
       url: url,
-      filename: 'RCRD/rcrd-backup-' + date + '.json',
+      filename: filename,
       saveAs: false
     }, function() {
       URL.revokeObjectURL(url);
-      showStatus('Backup exported!');
+      showStatus('Saved to Downloads/RCRD Backups/', 5000);
     });
   });
 }
 
-// Import notes from JSON file
+// Import notes from JSON file (triggered from file picker)
 function importBackup(e) {
   var file = e.target.files[0];
   if (!file) return;
@@ -357,46 +353,17 @@ function importBackup(e) {
       }
 
       var count = Object.keys(importedNotes).length;
-      showConfirm('Import backup', 'Found ' + count + ' user(s) in backup. How do you want to import?', [
+      showConfirm('Import from file', 'Found ' + count + ' user(s) in ' + file.name + '. You can undo this.', [
         { label: 'Cancel', style: 'secondary', value: null },
-        { label: 'Replace all', style: 'danger', value: 'replace' },
-        { label: 'Merge', style: 'primary', value: 'merge' }
+        { label: 'Merge', style: 'primary', value: 'merge' },
+        { label: 'Replace all', style: 'danger', value: 'replace' }
       ]).then(function(choice) {
         if (!choice) return;
 
         if (choice === 'merge') {
           chrome.storage.local.get(['userNotes'], function(result) {
             var existing = result.userNotes || {};
-
-            for (var handle in importedNotes) {
-              if (existing[handle]) {
-                var existingEntries = existing[handle].entries || [];
-                var importedEntries = importedNotes[handle].entries || [];
-
-                importedEntries.forEach(function(entry) {
-                  var exists = existingEntries.some(function(e) {
-                    return e.text === entry.text && e.date === entry.date;
-                  });
-                  if (!exists) {
-                    existingEntries.push(entry);
-                  }
-                });
-
-                existing[handle].entries = existingEntries;
-
-                var existingLabels = existing[handle].labels || [];
-                var importedLabels = importedNotes[handle].labels || [];
-                importedLabels.forEach(function(label) {
-                  if (existingLabels.indexOf(label) === -1) {
-                    existingLabels.push(label);
-                  }
-                });
-                existing[handle].labels = existingLabels;
-              } else {
-                existing[handle] = importedNotes[handle];
-              }
-            }
-
+            mergeNotes(existing, importedNotes);
             chrome.storage.local.set({ userNotes: existing }, function() {
               showStatus('Backup merged!');
               loadData();
@@ -429,55 +396,199 @@ function togglePopup(id) {
   }
 }
 
-// Show snapshot picker to restore from daily auto-backups
-function showSnapshotPicker() {
+// Unified restore menu — snapshot, sync backup, or file import
+function showRestoreMenu() {
   chrome.storage.local.get(null, function(all) {
     var snapshots = Object.keys(all)
       .filter(function(k) { return k.startsWith('_snapshot_'); })
       .sort()
       .reverse();
 
-    if (snapshots.length === 0) {
-      showStatus('No snapshots available yet');
-      return;
-    }
+    var latestSnapshot = snapshots.length > 0 ? snapshots[0].replace('_snapshot_', '') : null;
 
-    var buttons = snapshots.slice(0, 4).map(function(key) {
-      var date = key.replace('_snapshot_', '');
-      return { label: date, style: 'primary', value: key };
-    });
-    buttons.unshift({ label: 'Cancel', style: 'secondary', value: null });
+    // Build the restore options HTML
+    var html = '';
 
-    showConfirm(
-      'Restore from snapshot',
-      'Choose a daily snapshot to restore from (' + snapshots.length + ' available). This will replace your current data.',
-      buttons
-    ).then(function(choice) {
-      if (!choice) return;
-      try {
-        var restored = JSON.parse(all[choice]);
-        var count = Object.keys(restored).length;
-        showConfirm(
-          'Confirm restore',
-          'Restore ' + count + ' user(s) from this snapshot? Current data will be replaced.',
-          [
-            { label: 'Cancel', style: 'secondary', value: null },
-            { label: 'Restore', style: 'danger', value: 'yes' }
-          ]
-        ).then(function(confirmed) {
-          if (confirmed !== 'yes') return;
+    // Option 1: Snapshot
+    html += '<div class="restore-option' + (latestSnapshot ? '' : ' disabled') + '" data-action="snapshot">';
+    html += '<div class="restore-option-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M4.476 15.063C5.281 18.454 8.353 21 12 21C16.418 21 20 17.418 20 13C20 8.582 16.418 5 12 5C9.147 5 6.637 6.574 5.312 8.907M5.312 8.907L5.5 5.5M5.312 8.907L2 8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M12 8V13L15 15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>';
+    html += '<div class="restore-option-text"><div class="restore-option-title">From snapshot</div>';
+    html += '<div class="restore-option-desc">' + (latestSnapshot ? snapshots.length + ' saved &middot; latest: ' + latestSnapshot : 'No snapshots yet') + '</div></div></div>';
+
+    // Option 2: Sync backup
+    html += '<div class="restore-option" data-action="sync">';
+    html += '<div class="restore-option-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M20.5 5.5V10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 18.5V14H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 9.5C5.36 6.59 8.04 4.5 11.22 4.5C14.78 4.5 17.72 7.1 18.3 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.5 14.5C18.64 17.41 15.96 19.5 12.78 19.5C9.22 19.5 6.28 16.9 5.7 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';
+    html += '<div class="restore-option-text"><div class="restore-option-title">From browser sync</div>';
+    html += '<div class="restore-option-desc">Synced to your browser account</div></div></div>';
+
+    // Option 3: File import
+    html += '<div class="restore-option" data-action="file">';
+    html += '<div class="restore-option-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M12 4.5L12 14.5M12 4.5C12.707 4.5 14.032 6.494 14.5 7M12 4.5C11.293 4.5 9.968 6.494 9.5 7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/><path d="M20 16.5C20 18.982 19.482 19.5 17 19.5H7C4.518 19.5 4 18.982 4 16.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg></div>';
+    html += '<div class="restore-option-text"><div class="restore-option-title">From file</div>';
+    html += '<div class="restore-option-desc">Import a JSON backup from Downloads/RCRD Backups/</div></div></div>';
+
+    showConfirm('Restore data', html, [
+      { label: 'Cancel', style: 'secondary', value: null }
+    ], { html: true });
+
+    // Attach click handlers to the restore options
+    setTimeout(function() {
+      document.querySelectorAll('.restore-option').forEach(function(opt) {
+        opt.onclick = function() {
+          var action = opt.getAttribute('data-action');
+          document.getElementById('confirmOverlay').classList.remove('show');
+
+          if (action === 'snapshot') {
+            showSnapshotPicker(all, snapshots);
+          } else if (action === 'sync') {
+            restoreFromSyncUI();
+          } else if (action === 'file') {
+            document.getElementById('importFile').click();
+          }
+        };
+      });
+    }, 0);
+  });
+}
+
+// Snapshot sub-picker (called from restore menu)
+function showSnapshotPicker(all, snapshots) {
+  if (!snapshots || snapshots.length === 0) {
+    showStatus('No snapshots available yet');
+    return;
+  }
+
+  var buttons = snapshots.slice(0, 4).map(function(key) {
+    var date = key.replace('_snapshot_', '');
+    return { label: date, style: 'primary', value: key };
+  });
+  buttons.unshift({ label: 'Cancel', style: 'secondary', value: null });
+
+  showConfirm(
+    'Choose a snapshot',
+    snapshots.length + ' daily snapshot(s) available. Pick one to restore.',
+    buttons
+  ).then(function(choice) {
+    if (!choice) return;
+    try {
+      var restored = JSON.parse(all[choice]);
+      var count = Object.keys(restored).length;
+      showConfirm(
+        'Confirm restore',
+        'Restore ' + count + ' user(s) from ' + choice.replace('_snapshot_', '') + '? You can undo this.',
+        [
+          { label: 'Cancel', style: 'secondary', value: null },
+          { label: 'Merge', style: 'primary', value: 'merge' },
+          { label: 'Replace all', style: 'danger', value: 'replace' }
+        ]
+      ).then(function(mode) {
+        if (!mode) return;
+        if (mode === 'merge') {
+          chrome.storage.local.get(['userNotes'], function(result) {
+            var existing = result.userNotes || {};
+            mergeNotes(existing, restored);
+            chrome.storage.local.set({ userNotes: existing }, function() {
+              showStatus('Snapshot merged!');
+              loadData();
+            });
+          });
+        } else {
           saveStateForUndo(function() {
             chrome.storage.local.set({ userNotes: restored }, function() {
               showStatus('Restored from snapshot!');
               loadData();
             });
           });
-        });
-      } catch (err) {
-        showStatus('Error: corrupted snapshot');
-      }
-    });
+        }
+      });
+    } catch (err) {
+      showStatus('Error: corrupted snapshot');
+    }
   });
+}
+
+// Restore from browser sync backup
+function restoreFromSyncUI() {
+  chrome.storage.sync.get(null, function(syncData) {
+    var count = syncData._backupChunks;
+    if (!count || count === 0) {
+      showStatus('No sync backup found');
+      return;
+    }
+    var dataStr = '';
+    for (var i = 0; i < count; i++) {
+      var chunk = syncData['_backup_' + i];
+      if (!chunk) {
+        showStatus('Sync backup corrupted');
+        return;
+      }
+      dataStr += chunk;
+    }
+    try {
+      var restored = JSON.parse(dataStr);
+      if (typeof restored !== 'object' || Object.keys(restored).length === 0) {
+        showStatus('Sync backup is empty');
+        return;
+      }
+      var userCount = Object.keys(restored).length;
+      showConfirm(
+        'Restore from sync',
+        'Found ' + userCount + ' user(s) in browser sync backup. You can undo this.',
+        [
+          { label: 'Cancel', style: 'secondary', value: null },
+          { label: 'Merge', style: 'primary', value: 'merge' },
+          { label: 'Replace all', style: 'danger', value: 'replace' }
+        ]
+      ).then(function(mode) {
+        if (!mode) return;
+        if (mode === 'merge') {
+          chrome.storage.local.get(['userNotes'], function(result) {
+            var existing = result.userNotes || {};
+            mergeNotes(existing, restored);
+            chrome.storage.local.set({ userNotes: existing }, function() {
+              showStatus('Sync backup merged!');
+              loadData();
+            });
+          });
+        } else {
+          saveStateForUndo(function() {
+            chrome.storage.local.set({ userNotes: restored }, function() {
+              showStatus('Restored from sync!');
+              loadData();
+            });
+          });
+        }
+      });
+    } catch (err) {
+      showStatus('Error: corrupted sync backup');
+    }
+  });
+}
+
+// Merge imported/restored notes into existing data
+function mergeNotes(existing, incoming) {
+  for (var handle in incoming) {
+    if (existing[handle]) {
+      var existingEntries = existing[handle].entries || [];
+      var importedEntries = incoming[handle].entries || [];
+      importedEntries.forEach(function(entry) {
+        var exists = existingEntries.some(function(e) {
+          return e.text === entry.text && e.date === entry.date;
+        });
+        if (!exists) existingEntries.push(entry);
+      });
+      existing[handle].entries = existingEntries;
+
+      var existingLabels = existing[handle].labels || [];
+      var importedLabels = incoming[handle].labels || [];
+      importedLabels.forEach(function(label) {
+        if (existingLabels.indexOf(label) === -1) existingLabels.push(label);
+      });
+      existing[handle].labels = existingLabels;
+    } else {
+      existing[handle] = incoming[handle];
+    }
+  }
 }
 
 function closeAllPopups() {
@@ -1273,11 +1384,16 @@ function escapeHtml(s) {
 // Custom confirm dialog — returns a promise
 // buttons: array of { label, style, value }
 // style: 'primary' | 'secondary' | 'danger'
-function showConfirm(title, message, buttons) {
+function showConfirm(title, message, buttons, opts) {
   return new Promise(function(resolve) {
     var overlay = document.getElementById('confirmOverlay');
     document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMsg').textContent = message;
+    var msgEl = document.getElementById('confirmMsg');
+    if (opts && opts.html) {
+      msgEl.innerHTML = message;
+    } else {
+      msgEl.textContent = message;
+    }
     var actions = document.getElementById('confirmActions');
     actions.innerHTML = '';
     buttons.forEach(function(btn) {
@@ -1300,10 +1416,10 @@ function showConfirm(title, message, buttons) {
   });
 }
 
-function showStatus(msg) {
+function showStatus(msg, duration) {
   var el = document.getElementById('status');
   el.textContent = msg;
-  setTimeout(function() { el.textContent = ''; }, 2000);
+  setTimeout(function() { el.textContent = ''; }, duration || 2000);
 }
 
 // Auto-refresh on storage changes
